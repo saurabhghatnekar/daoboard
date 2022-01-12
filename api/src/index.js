@@ -7,6 +7,7 @@ const { graphqlUploadExpress } = require('graphql-upload');
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 const db = require('./db');
+const models = require('./models');
 
 const port = process.env.PORT;
 const DB_HOST = process.env.DB_HOST;
@@ -18,6 +19,9 @@ async function startServer() {
     const server = new ApolloServer({
       typeDefs,
       resolvers,
+      context: () => {
+        return { models };
+      }
     });
   
     await server.start();

@@ -1,7 +1,5 @@
 const { gql } = require('apollo-server-express');
 
-// To do: test that custom scalars typecast as expected
-
 module.exports = gql`
 scalar Upload
 scalar Date
@@ -143,7 +141,7 @@ type JobExperience {
     positionType: jobExperienceType!
 }
 
-type education {
+type Education {
     college: String!
     graduation: Date
     degreeType: DegreeType
