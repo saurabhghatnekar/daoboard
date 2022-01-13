@@ -12,6 +12,7 @@ type User {
     Account info
     """
 
+    id: ID!
     email: Email!
     password: String!
     appliedTo: [JobPosting]!
@@ -83,6 +84,7 @@ type User {
 }
 
 type Recruiter {
+    id: ID!
     firstName: String!
     lastName: String!
     email: Email!
@@ -94,6 +96,7 @@ type Recruiter {
 }
 
 type Company {
+    id: ID!
     name: String!
     logo: File
     type: companyType!
@@ -110,16 +113,30 @@ type Company {
 }
 
 type JobPosting {
+    id: ID!
+    company: Company!
     about: String
     experienceRequired: Experience
-    jobType: [JobType!]!
+    role: [Role!]!
+    jobType: JobType!
     skillsRequired: [String]!
     hiringContact: Recruiter!
+    applied: [User]!
 }
 
 type Query {
-    hello: String
     uploads: [File]
+    users: [User]!
+    recruiters: [Recruiter]!
+    companies: [Company]!
+    jobPostings: [JobPosting]!
+
+    me: User!
+    company: Company!
+    jobPostingsByCompany: [JobPosting]!
+    jobPostingsByRole: [JobPosting]!
+    jobPostingsByJobType: [JobPosting]!
+    jobPostingsByCompanyType: [JobPosting]!
 }
 
 type Mutation {

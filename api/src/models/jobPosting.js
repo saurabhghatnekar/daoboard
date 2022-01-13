@@ -77,16 +77,24 @@ const experience = [
 
 const jobPostingSchema = new mongoose.Schema(
     {
+        company: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Company'
+        },
         about: {
             type: String,
             maxLength: 4000,
             required: true
         },
-        jobType: {
+        role: {
             type: String,
             enum: roles,
             required: true
         },
+        jobType: [{
+            type: String,
+            enum: ['FullTime', 'PartTime', 'Intern', 'Cofounder']
+        }],
         experienceRequired: {
             type: String,
             enum: experience,
@@ -98,6 +106,10 @@ const jobPostingSchema = new mongoose.Schema(
         hiringContact: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Recruiter'
+        }],
+        applied: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
         }],
 
         
