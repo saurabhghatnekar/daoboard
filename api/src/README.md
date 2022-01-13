@@ -17,6 +17,7 @@
 
 3. Users will be able to view Job Postings
 <ol type="a">
+   <li>Users will be able to view job postings they have applied to</li>
    <li>Users will be able to filter by Company</li>
    <li>Users will be able to filter by Role</li>
    <li>Users will be able to filter by Job Type</li>

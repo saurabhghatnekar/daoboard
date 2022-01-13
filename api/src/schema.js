@@ -131,12 +131,22 @@ type Query {
     companies: [Company]!
     jobPostings: [JobPosting]!
 
+    """
+    User queries
+    """
     me: User!
     company: Company!
+    myPostings: [JobPosting!]
     jobPostingsByCompany: [JobPosting]!
     jobPostingsByRole: [JobPosting]!
     jobPostingsByJobType: [JobPosting]!
     jobPostingsByCompanyType: [JobPosting]!
+
+    """
+    Recruiter queries
+    """
+    meRecruiter: Recruiter!
+
 }
 
 type Mutation {

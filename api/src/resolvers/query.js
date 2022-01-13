@@ -23,17 +23,20 @@ module.exports = {
     company: async (_, args, { models }) => {
         return await models.Company.findById(args.id);
     },
+    myPostings: async (company, __, { models }) => {
+        return await models.JobPosting.find({ appliedTo: company.id });
+    },
     jobPostingsByCompany: async (company, args, { models }) => {
         return await models.JobPosting.find({ "company._id": "args.id" });
     },
-    jobPostingsByRole: async (_, args, { models }) => {
-        return await models.JobPosting.find({ "company.role": "args.role" });
+    jobPostingsByRole: async (_, _role, { models }) => {
+        return await models.JobPosting.find({ role: _role });
     },
-    jobPostingsByJobType: async (_, args, { models }) => {
-        return await models.JobPosting.find({ "company.jobType": "args.jobType" });
+    jobPostingsByJobType: async (_, _jobType, { models }) => {
+        return await models.JobPosting.find({ jobType: _jobType });
     },
-    jobPostingsByCompanyType: async (_, args, { models }) => {
-        return await models.JobPosting.find({ "company.companyType": "args.companyType" });
+    jobPostingsByCompanyType: async (_, _companyType, { models }) => {
+        return await models.JobPosting.find({ companyType: _companyType });
     },
 
 };
