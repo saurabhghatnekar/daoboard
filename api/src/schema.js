@@ -136,7 +136,7 @@ type Query {
     """
     me: User!
     company: Company!
-    myPostings: [JobPosting!]
+    myPostings: [JobPosting]!
     jobPostingsByCompany: [JobPosting]!
     jobPostingsByRole: [JobPosting]!
     jobPostingsByJobType: [JobPosting]!
@@ -146,6 +146,11 @@ type Query {
     Recruiter queries
     """
     meRecruiter: Recruiter!
+    RecruiterPostings: [JobPosting]!
+    UsersByCurrentRole: [User]!
+    UsersByOpenToRoles: [User]!
+    UsersByJobType: [User]!
+    UsersByExperience: [User]!
 
 }
 

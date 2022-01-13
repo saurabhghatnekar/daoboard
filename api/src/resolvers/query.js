@@ -39,4 +39,25 @@ module.exports = {
         return await models.JobPosting.find({ companyType: _companyType });
     },
 
+    // Recruiter queries
+    meRecruiter: async (_, __, { models, recruiter }) => {
+        return await models.Recruiter.findById(recruiter.id);
+    },
+    RecruiterPostings: async (company, __, { models }) => {
+        return await models.JobPosting.find({ jobPostings: company.id });
+    },
+    UsersByCurrentRole: async (_, _role, { models }) => {
+        return await models.Users.find({ currentRole: _role });
+    },
+    UsersByOpenToRoles: async (_, _role, { models }) => {
+        return await models.Users.find({ _role: { $in: openToRoles } } );
+    },
+    UsersByJobType: async (_, _jobType, { models }) => {
+        return await models.Users.find({ _jobType: { $in: jobType } } );
+    },
+    UsersByExperience: async (_, _experience, { models }) => {
+        return await models.Users.find({ _experience: { $in: _experience } } );
+    },
+    
+
 };
