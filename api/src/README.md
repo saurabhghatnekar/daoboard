@@ -1,5 +1,7 @@
 # DAOboard
 
+Note: Rename .env.example to .env for server to work.
+
 ## Features
 
 ### Users
