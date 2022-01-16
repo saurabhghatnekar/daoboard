@@ -24,7 +24,7 @@ type User {
 
     firstName: String!
     lastName: String!
-    ens: String!
+    ens: String
     pfp: File
     currentRole: Role!
     experience: Experience!
@@ -156,6 +156,8 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
+    signUp(email: Email!, password: String!): String!
+    signIn(email: Email!, password: String!): String!
 }
 
 type File {

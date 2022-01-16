@@ -13,11 +13,13 @@
   "dependencies": {
     "apollo-server": "^3.6.1",
     "apollo-server-express": "^3.6.1",
+    "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "graphql": "^16.2.0",
     "graphql-scalars": "^1.14.1",
     "graphql-upload": "^13.0.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.5",
     "mongoose-type-email": "^1.1.2",
     "mongoose-type-url": "^2.1.0",

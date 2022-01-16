@@ -93,15 +93,14 @@ const userSchema = new mongoose.Schema(
 
         firstName: {
             type: String,
-            required: true
+            // required: true
         },
         lastName: {
             type: String,
-            required: true
+            // required: true
         },
         ens: {
             type: String,
-            required: true
         },
         pfp: {
             type: Buffer
@@ -109,12 +108,12 @@ const userSchema = new mongoose.Schema(
         currentRole: {
             type: String,
             enum: roles,
-            required: true
+            // required: true
         },
         experience: {
             type: String,
             enum: experience,
-            required: true
+            // required: true
         },
         openToRoles: [{
             type: String,
