@@ -3,7 +3,6 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
 scalar Upload
 scalar Date
-scalar URL
 scalar Email
 
 type User {
@@ -35,10 +34,10 @@ type User {
     Social profiles
     """
 
-    website: URL
-    linkedIn: URL
-    github: URL
-    twitter: URL
+    website: String
+    linkedIn: String
+    github: String
+    twitter: String
 
     """
     Experience
@@ -100,10 +99,10 @@ type Company {
     name: String!
     logo: File
     type: companyType!
-    website: URL
-    linkedIn: URL
-    github: URL
-    twitter: URL
+    website: String
+    linkedIn: String
+    github: String
+    twitter: String
     markets: [String]!
     elevatorPitch: String!
     whyYourCompany: String!
@@ -158,7 +157,48 @@ type Mutation {
     singleUpload(file: Upload!): File!
     signUp(email: Email!, password: String!): String!
     signIn(email: Email!, password: String!): String!
+
+    updateUserStringField(field: String!, value: String!): User!
+    updatePFP(pfp: Upload!): User!
+    updateCurrentRole(currentRole: Role!): User!
+    updateExperience(experience: Experience!): User!
+    updateOpenToRoles(openToRoles: [Role]!): User!
+    updateSkills(skills: [String]!): User!
+    updateResume(pfp: Upload!): User!
+    updateStatus(status: Status!): User!
+    updateJobType(jobType: [JobType]!): User!
+
+    createJobExperience(
+        company: String!,
+        title: String!,
+        startDate: Date!,
+        endDate: Date!,
+        description: String!
+        positionType: jobExperienceType!
+    ): JobExperience!
+    updateJobExperienceStringField(id: ID!, field: String!, 
+        value: String!): JobExperience!
+    updateJobExperienceDateField(id: ID!, field: String!, 
+        value: Date!): JobExperience!
+    updatePositionType(id: ID!,
+        positionType: jobExperienceType!): JobExperience!
+
+    createEducation(
+        college: String!,
+        graduation: Date,
+        degreeType: DegreeType,
+        major: String,
+        gpa: Float,
+        gpaMax: Float
+    ): Education!
+    updateDegreeType(id: ID!, degreeType: DegreeType!): Education!
+    updateEducationStringField(id: ID!, field: String!, 
+        value: String!): Education!
+    updateEducationFloatField(id: ID!, field: String!, 
+        value: Float!): Education!
+    updateGraduation(id: ID!, graduation: Date!): Education!
 }
+
 
 type File {
     filename: String!
@@ -167,21 +207,25 @@ type File {
 }
 
 type JobExperience {
+    id: ID!
     company: String!
     title: String!
     startDate: Date!
     endDate: Date!
     description: String
     positionType: jobExperienceType!
+    user: User!
 }
 
 type Education {
+    id: ID!
     college: String!
     graduation: Date
     degreeType: DegreeType
     major: String
     gpa: Float
     gpaMax: Float
+    user: User!
 }
 
 enum Role {
