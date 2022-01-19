@@ -44,7 +44,60 @@ module.exports = {
     return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
   },
 
+  updateUserProfile: async (_, { 
+      field, 
+      stringValue,
+      stringsValue,
+      roleValue,
+      rolesValue,
+      statusValue,
+      jobTypesValue
+    }, { models, user }) => {
 
+    // Parameters
+    // `field`: select a value from `valid_field_values` to update
+    // Choose second parameter based on `field`'s type
+    // For example, if `field` is "firstname" (type String), second parameter
+    // must be `stringValue`
+    // second parameter: set value based on type
+    // For example, if second parameter is `stringValue`, you can set
+    // value to "James"
+
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to create a profile');
+    }
+
+    valid_field_values = [
+      "firstName",
+      "lastName",
+      "ens",
+      "bio",
+      "currentRole",
+      "openToRoles",
+      "website",
+      "linkedIn",
+      "github",
+      "twitter",
+      "skills",
+      "status",
+      "jobType",
+      "lookingForWebThree",
+      "experience"
+    ]
+
+    if (!valid_field_values.includes(field)) {
+      throw new ForbiddenError('Invalid field');
+    }
+
+    value = stringValue || stringsValue || roleValue ||
+     rolesValue || statusValue || jobTypesValue || experienceValue
+
+    return await models.User.findOneAndUpdate(
+      { id: user.id },
+      { $set: {[field]: value} },
+      { new: true }
+    )
+  },
 
   updatePFP: async (_, { pfp }, { models, user }) => {
     if (!user) {
@@ -61,98 +114,9 @@ module.exports = {
   },
 
 
-  updateCurrentRole: async (_, { currentRole }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.User.findOneAndUpdate(
-      { id: user.id },
-      { $set: {currentRole} },
-      { new: true }
-    )
-  },
 
-  updateExperience: async (_, { experience }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.User.findOneAndUpdate(
-      { id: user.id },
-      { $set: {experience} },
-      { new: true }
-    )
-  },
 
-  updateOpenToRoles: async (_, { openToRoles }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.User.findOneAndUpdate(
-      { id: user.id },
-      { $set: {openToRoles} },
-      { new: true }
-    )
-  },
 
-  updateUserStringField: async (_, { field, value }, { models, user }) => {
-    valid_input_fields = [
-      "firstName",
-      "lastName",
-      "ens",
-      "bio",
-      "website",
-      "linkedIn",
-      "github",
-      "twitter",
-      "lookingForWebThree"
-    ]
-
-    if (!valid_input_fields.includes(field)) {
-      throw new ForbiddenError('Invalid field');
-    }
-
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.User.findOneAndUpdate(
-      { id: user.id },
-      { $set: {[field]: value} },
-      { new: true }
-    )
-  },
-
-  updateSkills: async (_, { skills }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.User.findOneAndUpdate(
-      { id: user.id },
-      { $set: {skills} },
-      { new: true }
-    )
-  },
-
-  updateStatus: async (_, { status }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.User.findOneAndUpdate(
-      { id: user.id },
-      { $set: {status} },
-      { new: true }
-    )
-  },
-
-  updateJobType: async (_, { jobType }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.User.findOneAndUpdate(
-      { id: user.id },
-      { $set: {jobType} },
-      { new: true }
-    )
-  },
 
   createJobExperience: async (_, args, { models, user }) => {
     if (!user) {
@@ -170,34 +134,23 @@ module.exports = {
     })
   },
 
-  updateJobExperienceStringField: async (_, { _id, field, value }, 
-  { models, user }) => {
+  updateJobExperience: async (_, { 
+    _id, 
+    field,
+    stringValue,
+    dateValue, 
+    jobExperienceTypeValue }, { models, user }) => {
+
     valid_input_fields = [
       "company",
       "title",
-      "description"
-    ]
-
-    if (!valid_input_fields.includes(field)) {
-      throw new ForbiddenError('Invalid field');
-    }
-
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.JobExperience.findOneAndUpdate(
-      { id: _id },
-      { $set: {[field]: value} },
-      { new: true }
-    )
-  },
-
-  updateJobExperienceDateField: async (_, { _id, field, value }, 
-  { models, user }) => {
-    valid_input_fields = [
+      "description",
       "startDate",
-      "endDate"
+      "endDate",
+      "positionType"
     ]
+
+    value = stringValue || dateValue || jobExperienceTypeValue
 
     if (!valid_input_fields.includes(field)) {
       throw new ForbiddenError('Invalid field');
@@ -206,6 +159,7 @@ module.exports = {
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
+
     return await models.JobExperience.findOneAndUpdate(
       { id: _id },
       { $set: {[field]: value} },
@@ -213,16 +167,6 @@ module.exports = {
     )
   },
 
-  updatePositionType: async (_, { _id, positionType }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.JobExperience.findOneAndUpdate(
-      { id: _id },
-      { $set: {positionType} },
-      { new: true }
-    )
-  },
 
   createEducation: async (_, args, { models, user }) => {
     if (!user) {
@@ -240,30 +184,20 @@ module.exports = {
     })
   },
 
-  updateEducationStringField: async (_, { _id, field, value }, 
+  updateEducation: async (_, { 
+    _id, 
+    field, 
+    stringValue,
+    floatValue,
+    degreeTypeValue,
+    dateValue }, 
   { models, user }) => {
+
     valid_input_fields = [
       "college",
       "major",
-    ]
-
-    if (!valid_input_fields.includes(field)) {
-      throw new ForbiddenError('Invalid field');
-    }
-
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.Education.findOneAndUpdate(
-      { id: _id },
-      { $set: {[field]: value} },
-      { new: true }
-    )
-  },
-
-  updateEducationFloatField: async (_, { _id, field, value }, 
-  { models, user }) => {
-    valid_input_fields = [
+      "graduation",
+      "degreeType",
       "gpa",
       "gpaMax"
     ]
@@ -272,6 +206,9 @@ module.exports = {
       throw new ForbiddenError('Invalid field');
     }
 
+    value = stringValue || floatValue || degreeTypeValue ||
+     dateValue
+
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
@@ -282,27 +219,6 @@ module.exports = {
     )
   },
 
-  updateGraduation: async (_, { _id, graduation }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.Education.findOneAndUpdate(
-      { id: _id },
-      { $set: {graduation} },
-      { new: true }
-    )
-  },
-
-  updateDegreeType: async (_, { _id, degreeType }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return await models.Education.findOneAndUpdate(
-      { id: _id },
-      { $set: {degreeType} },
-      { new: true }
-    )
-  },
 
   singleUpload: async (_, { file }) => {
     const { createReadStream, filename, mimetype, encoding } = await file;

@@ -158,15 +158,19 @@ type Mutation {
     signUp(email: Email!, password: String!): String!
     signIn(email: Email!, password: String!): String!
 
-    updateUserStringField(field: String!, value: String!): User!
+    updateUserProfile(
+        field: String!
+        stringValue: String
+        stringsValue: [String]
+        roleValue: Role
+        rolesValue: [Role]
+        statusValue: Status
+        jobTypesValue: [JobType]
+        experienceValue: Experience
+    ): User!
+
     updatePFP(pfp: Upload!): User!
-    updateCurrentRole(currentRole: Role!): User!
-    updateExperience(experience: Experience!): User!
-    updateOpenToRoles(openToRoles: [Role]!): User!
-    updateSkills(skills: [String]!): User!
     updateResume(pfp: Upload!): User!
-    updateStatus(status: Status!): User!
-    updateJobType(jobType: [JobType]!): User!
 
     createJobExperience(
         company: String!,
@@ -176,12 +180,13 @@ type Mutation {
         description: String!
         positionType: jobExperienceType!
     ): JobExperience!
-    updateJobExperienceStringField(id: ID!, field: String!, 
-        value: String!): JobExperience!
-    updateJobExperienceDateField(id: ID!, field: String!, 
-        value: Date!): JobExperience!
-    updatePositionType(id: ID!,
-        positionType: jobExperienceType!): JobExperience!
+    updateJobExperience(
+        id: ID!
+        field: String!
+        stringValue: String
+        dateValue: Date
+        jobExperienceTypeValue: jobExperienceType
+    ): JobExperience!
 
     createEducation(
         college: String!,
@@ -191,12 +196,14 @@ type Mutation {
         gpa: Float,
         gpaMax: Float
     ): Education!
-    updateDegreeType(id: ID!, degreeType: DegreeType!): Education!
-    updateEducationStringField(id: ID!, field: String!, 
-        value: String!): Education!
-    updateEducationFloatField(id: ID!, field: String!, 
-        value: Float!): Education!
-    updateGraduation(id: ID!, graduation: Date!): Education!
+    updateEducation(
+        id: ID!
+        field: String!
+        stringValue: String
+        floatValue: Float
+        degreeTypeValue: DegreeType
+        dateValue: Date
+    ): Education!
 }
 
 
