@@ -51,50 +51,46 @@ module.exports = {
       roleValue,
       rolesValue,
       statusValue,
-      jobTypesValue
+      jobTypesValue,
+      experienceValue
     }, { models, user }) => {
 
-    // Parameters
-    // `field`: select a value from `valid_field_values` to update
-    // Choose second parameter based on `field`'s type
-    // For example, if `field` is "firstname" (type String), second parameter
-    // must be `stringValue`
-    // second parameter: set value based on type
-    // For example, if second parameter is `stringValue`, you can set
-    // value to "James"
+    // Takes two parameters
+    // `field`: select a key from `field_to_type` to update
+    // Second parameter is `field_to_type[field]`
+    // Set second parameter's value based on type
+    // For example, if second parameter is `stringValue`, value
+    // can be set to "James"
 
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
 
-    valid_field_values = [
-      "firstName",
-      "lastName",
-      "ens",
-      "bio",
-      "currentRole",
-      "openToRoles",
-      "website",
-      "linkedIn",
-      "github",
-      "twitter",
-      "skills",
-      "status",
-      "jobType",
-      "lookingForWebThree",
-      "experience"
-    ]
+    field_to_type = {
+      "firstName": stringValue,
+      "lastName": stringValue,
+      "ens": stringValue,
+      "bio": stringValue,
+      "currentRole": roleValue,
+      "openToRoles": rolesValue,
+      "website": stringValue,
+      "linkedIn": stringValue,
+      "github": stringValue,
+      "twitter": stringValue,
+      "skills": stringsValue,
+      "status": statusValue,
+      "jobType": jobTypesValue,
+      "lookingForWebThree": stringValue,
+      "experience": experienceValue
+    }
 
-    if (!valid_field_values.includes(field)) {
+    if (!(field in field_to_type)) {
       throw new ForbiddenError('Invalid field');
     }
 
-    value = stringValue || stringsValue || roleValue ||
-     rolesValue || statusValue || jobTypesValue || experienceValue
-
     return await models.User.findOneAndUpdate(
       { id: user.id },
-      { $set: {[field]: value} },
+      { $set: {[field]: field_to_type[field]} },
       { new: true }
     )
   },
@@ -112,10 +108,6 @@ module.exports = {
     }
     return // Update this
   },
-
-
-
-
 
 
   createJobExperience: async (_, args, { models, user }) => {
@@ -141,28 +133,26 @@ module.exports = {
     dateValue, 
     jobExperienceTypeValue }, { models, user }) => {
 
-    valid_input_fields = [
-      "company",
-      "title",
-      "description",
-      "startDate",
-      "endDate",
-      "positionType"
-    ]
-
-    value = stringValue || dateValue || jobExperienceTypeValue
-
-    if (!valid_input_fields.includes(field)) {
-      throw new ForbiddenError('Invalid field');
-    }
-
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
 
+    field_to_type = {
+      "company": stringValue,
+      "title": stringValue,
+      "description": stringValue,
+      "startDate": dateValue,
+      "endDate": dateValue,
+      "positionType": jobExperienceTypeValue
+    }
+
+    if (!(field in field_to_type)) {
+      throw new ForbiddenError('Invalid field');
+    }
+
     return await models.JobExperience.findOneAndUpdate(
       { id: _id },
-      { $set: {[field]: value} },
+      { $set: {[field]: field_to_type[field]} },
       { new: true }
     )
   },
@@ -193,28 +183,26 @@ module.exports = {
     dateValue }, 
   { models, user }) => {
 
-    valid_input_fields = [
-      "college",
-      "major",
-      "graduation",
-      "degreeType",
-      "gpa",
-      "gpaMax"
-    ]
-
-    if (!valid_input_fields.includes(field)) {
-      throw new ForbiddenError('Invalid field');
-    }
-
-    value = stringValue || floatValue || degreeTypeValue ||
-     dateValue
-
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
+    
+    field_to_type = {
+      "college": stringValue,
+      "major": stringValue,
+      "graduation": dateValue,
+      "degreeType": degreeTypeValue,
+      "gpa": floatValue,
+      "gpaMax": floatValue
+    }
+
+    if (!(field in field_to_type)) {
+      throw new ForbiddenError('Invalid field');
+    }
+
     return await models.Education.findOneAndUpdate(
       { id: _id },
-      { $set: {[field]: value} },
+      { $set: {[field]: field_to_type[field]} },
       { new: true }
     )
   },
