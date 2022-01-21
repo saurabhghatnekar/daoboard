@@ -85,20 +85,20 @@ const recruiterSchema = new mongoose.Schema(
 
         firstName: {
             type: String,
-            required: true
+            // required: true
         },
         lastName: {
             type: String,
-            required: true
+            // required: true
         },
         role: {
             type: String,
             enum: roles,
-            required: true
+            // required: true
         },
         isFounder: {
             type: Boolean,
-            required: true
+            // required: true
         }
 
 

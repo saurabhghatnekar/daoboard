@@ -13,35 +13,66 @@ const mongoose = require('mongoose');
 // maxLength validator not working
 
 module.exports = {
-  signUp: async (_, { email, password }, { models }) => {
+  signUp: async (_, { email, password, isUserAccount, isRecruiterAccount }, { models }) => {
     email = email.trim().toLowerCase();
     const hashed = await bcrypt.hash(password, 10);
+
     try {
-      const user = await models.User.create({
-        email,
-        password: hashed
-      });
-      return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+      if (isUserAccount) {
+        const user = await models.User.create({
+          email,
+          password: hashed
+        });
+        return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        }
+      
+      else if (isRecruiterAccount) {
+        const recruiter = await models.Recruiter.create({
+          email,
+          password: hashed
+        });
+        return jwt.sign({ id: recruiter._id }, process.env.JWT_SECRET);
+        } 
+
     } catch (err) {
-      console.log(err);
-      throw new Error('Error creating account');
+        console.log(err);
+        throw new Error('Error creating account');
     }
   },
   
-  signIn: async (_, { email, password }, { models }) => {
+  signIn: async (_, { email, password, isUserAccount, isRecruiterAccount }, { models }) => {
     email = email.trim().toLowerCase();
-    const user = await models.User.findOne({ email });
-    
-    if (!user) {
-      throw new AuthenticationError('Email not found');
+
+    if (isUserAccount) {
+      const user = await models.User.findOne({ email });
+      
+      if (!user) {
+        throw new AuthenticationError('Email not found');
+      }
+
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) {
+        throw new AuthenticationError('Invalid password');
+      }
+
+      return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     }
 
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      throw new AuthenticationError('Invalid password');
-    }
+    else if (isRecruiterAccount) {
+      const recruiter = await models.Recruiter.findOne({ email });
+      
+      if (!recruiter) {
+        throw new AuthenticationError('Email not found');
+      }
 
-    return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const valid = await bcrypt.compare(password, recruiter.password);
+      if (!valid) {
+        throw new AuthenticationError('Invalid password');
+      }
+
+      return jwt.sign({ id: recruiter._id }, process.env.JWT_SECRET);
+    }
   },
 
   updateUserProfile: async (_, { 
@@ -222,5 +253,47 @@ module.exports = {
     await finished(out);
 
     return { filename, mimetype, encoding };
+  },
+
+
+  // Recruiter functions
+
+    // company: Company!
+    // jobPostings: [JobPosting]!
+
+  updateRecruiterProfile: async (_, { 
+      field, 
+      stringValue,
+      booleanValue,
+      roleValue,
+    }, { models, recruiter }) => {
+
+    // Takes two parameters
+    // `field`: select a key from `field_to_type` to update
+    // Second parameter is `field_to_type[field]`
+    // Set second parameter's value based on type
+    // For example, if second parameter is `stringValue`, value
+    // can be set to "James"
+
+    if (!recruiter) {
+      throw new AuthenticationError('You must be signed in to create a profile');
+    }
+
+    field_to_type = {
+      "firstName": stringValue,
+      "lastName": stringValue,
+      "isFounder": booleanValue,
+      "role": roleValue,
+    }
+
+    if (!(field in field_to_type)) {
+      throw new ForbiddenError('Invalid field');
+    }
+
+    return await models.Recruiter.findOneAndUpdate(
+      { id: recruiter.id },
+      { $set: {[field]: field_to_type[field]} },
+      { new: true }
+    )
   },
   };

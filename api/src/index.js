@@ -14,13 +14,20 @@ const port = process.env.PORT;
 const DB_HOST = process.env.DB_HOST;
 db.connect(DB_HOST);
 
-const getUser = token => {
+// Set value of `isUserAccount`
+// Function should be called in UI
+const setAccountType = () => {
+  isUserAccount = true;
+  return isUserAccount
+};
+
+const getUserOrRecruiter = token => {
   if (token) {
     try {
       return jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
       console.log(err);
-      throw new Error('Session invalid');
+     // throw new Error('Session invalid');
     }
   }
 };
@@ -28,14 +35,22 @@ const getUser = token => {
 
 
 async function startServer() {
-    const server = new ApolloServer({
-      typeDefs,
-      resolvers,
-      context: ({ req }) => {
-        const token = req.headers.authorization;
-        const user = getUser(token);
+  const isUserAccount = setAccountType();
+  const isRecruiterAccount = !isUserAccount
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req }) => {
+      const token = req.headers.authorization;
+      if (isUserAccount) {
+        const user = getUserOrRecruiter(token);
         return { models, user };
-      }
+        }
+      else if (isRecruiterAccount) {
+        const recruiter = getUserOrRecruiter(token);
+        return { models, recruiter };
+        }
+        }
     });
   
     await server.start();

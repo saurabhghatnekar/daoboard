@@ -155,8 +155,10 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
-    signUp(email: Email!, password: String!): String!
-    signIn(email: Email!, password: String!): String!
+    signUp(email: Email!, password: String!,
+        isUserAccount: Boolean, isRecruiterAccount: Boolean): String!
+    signIn(email: Email!, password: String!,
+        isUserAccount: Boolean, isRecruiterAccount: Boolean): String!
 
     updateUserProfile(
         field: String!
@@ -204,6 +206,13 @@ type Mutation {
         degreeTypeValue: DegreeType
         dateValue: Date
     ): Education!
+
+    updateRecruiterProfile(
+        field: String!
+        stringValue: String
+        booleanValue: Boolean
+        roleValue: Role
+    ): Recruiter!
 }
 
 
