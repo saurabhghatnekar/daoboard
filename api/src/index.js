@@ -14,14 +14,8 @@ const port = process.env.PORT;
 const DB_HOST = process.env.DB_HOST;
 db.connect(DB_HOST);
 
-// Set value of `isUserAccount`
-// Function should be called in UI
-const setAccountType = () => {
-  isUserAccount = true;
-  return isUserAccount
-};
 
-const getUserOrRecruiter = token => {
+const getUser = token => {
   if (token) {
     try {
       return jwt.verify(token, process.env.JWT_SECRET);
@@ -35,21 +29,13 @@ const getUserOrRecruiter = token => {
 
 
 async function startServer() {
-  const isUserAccount = setAccountType();
-  const isRecruiterAccount = !isUserAccount
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     context: ({ req }) => {
       const token = req.headers.authorization;
-      if (isUserAccount) {
-        const user = getUserOrRecruiter(token);
-        return { models, user };
-        }
-      else if (isRecruiterAccount) {
-        const recruiter = getUserOrRecruiter(token);
-        return { models, recruiter };
-        }
+      const user = getUser(token);
+      return { models, user };
         }
     });
   

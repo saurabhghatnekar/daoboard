@@ -75,6 +75,11 @@ const experience = [
     "moreEightYears"
 ]
 
+const accountTypes = [
+    "JobSeeker",
+    "Recruiter"
+]
+
 const userSchema = new mongoose.Schema(
     {
         email: {
@@ -85,6 +90,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        accountType: [{
+            type: String,
+            enum: accountTypes
+        }],
         appliedTo: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'JobPosting'
@@ -176,6 +185,22 @@ const userSchema = new mongoose.Schema(
         lookingForWebThree: {
             type: String,
             maxLength: 280
+        },
+
+
+        // Recruiter fields
+
+        jobPostings: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'JobPosting'
+        }],
+        company: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Company'
+        },
+        isFounder: {
+            type: Boolean,
+            // required: true
         }
 
 

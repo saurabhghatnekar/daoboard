@@ -6,9 +6,6 @@ module.exports = {
     users: async (_, __, { models }) => {
         return await models.User.find();
     },
-    recruiters: async (_, __, { models }) => {
-        return await models.Recruiter.find();
-    },
     companies: async (_, __, { models }) => {
         return await models.Company.find();
     },
@@ -40,9 +37,6 @@ module.exports = {
     },
 
     // Recruiter queries
-    meRecruiter: async (_, __, { models, recruiter }) => {
-        return await models.Recruiter.findById(recruiter.id);
-    },
     RecruiterPostings: async (company, __, { models }) => {
         return await models.JobPosting.find({ jobPostings: company.id });
     },

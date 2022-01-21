@@ -16,6 +16,7 @@ type User {
     password: String!
     appliedTo: [JobPosting]!
     publicKey: String
+    accountType: [AccountType]
 
     """
     About
@@ -80,19 +81,16 @@ type User {
     """
 
     lookingForWebThree: String!
-}
 
-type Recruiter {
-    id: ID!
-    firstName: String!
-    lastName: String!
-    email: Email!
-    password: String!
+    """
+    Recruiter fields
+    """
     company: Company!
     isFounder: Boolean!
-    role: Role
     jobPostings: [JobPosting]!
+
 }
+
 
 type Company {
     id: ID!
@@ -106,8 +104,8 @@ type Company {
     markets: [String]!
     elevatorPitch: String!
     whyYourCompany: String!
-    recruiters: [Recruiter!]!
-    founders: [Recruiter]!
+    recruiters: [User!]!
+    founders: [User]!
     jobsPostings: [JobPosting]!
 }
 
@@ -119,14 +117,13 @@ type JobPosting {
     role: [Role!]!
     jobType: JobType!
     skillsRequired: [String]!
-    hiringContact: Recruiter!
+    hiringContact: User!
     applied: [User]!
 }
 
 type Query {
     uploads: [File]
     users: [User]!
-    recruiters: [Recruiter]!
     companies: [Company]!
     jobPostings: [JobPosting]!
 
@@ -144,7 +141,6 @@ type Query {
     """
     Recruiter queries
     """
-    meRecruiter: Recruiter!
     RecruiterPostings: [JobPosting]!
     UsersByCurrentRole: [User]!
     UsersByOpenToRoles: [User]!
@@ -155,20 +151,20 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
-    signUp(email: Email!, password: String!,
-        isUserAccount: Boolean, isRecruiterAccount: Boolean): String!
-    signIn(email: Email!, password: String!,
-        isUserAccount: Boolean, isRecruiterAccount: Boolean): String!
+    signUp(email: Email!, password: String!): String!
+    signIn(email: Email!, password: String!): String!
 
-    updateUserProfile(
+    updateProfile(
         field: String!
         stringValue: String
         stringsValue: [String]
+        accountTypesValue: [AccountType]
         roleValue: Role
         rolesValue: [Role]
         statusValue: Status
         jobTypesValue: [JobType]
         experienceValue: Experience
+        booleanValue: Boolean
     ): User!
 
     updatePFP(pfp: Upload!): User!
@@ -207,12 +203,7 @@ type Mutation {
         dateValue: Date
     ): Education!
 
-    updateRecruiterProfile(
-        field: String!
-        stringValue: String
-        booleanValue: Boolean
-        roleValue: Role
-    ): Recruiter!
+
 }
 
 
@@ -242,6 +233,11 @@ type Education {
     gpa: Float
     gpaMax: Float
     user: User!
+}
+
+enum AccountType {
+    JobSeeker
+    Recruiter
 }
 
 enum Role {
