@@ -30,7 +30,7 @@ module.exports = {
   
   signIn: async (_, { email, password }, { models }) => {
     email = email.trim().toLowerCase();
-    const user = await models.User.findOne({ email });
+    const user = await models.User.findOne( { email } );
     
     if (!user) {
       throw new AuthenticationError('Email not found');
@@ -93,7 +93,7 @@ module.exports = {
     }
 
     return await models.User.findOneAndUpdate(
-      { id: user.id },
+      { _id: user.id },
       { $set: { [field]: field_to_type[field] } },
       { new: true }
     )
@@ -131,7 +131,7 @@ module.exports = {
   },
 
   updateJobExperience: async (_, { 
-    _id, 
+    id, 
     field,
     stringValue,
     dateValue, 
@@ -139,6 +139,13 @@ module.exports = {
 
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
+    }
+
+    const jobExperience = await models.JobExperience.findById(id);
+    if (jobExperience && String(jobExperience.user) !== user.id) {
+      throw new ForbiddenError(
+        "You don't have permissions to update job experience!"
+        );
     }
 
     field_to_type = {
@@ -155,7 +162,7 @@ module.exports = {
     }
 
     return await models.JobExperience.findOneAndUpdate(
-      { id: _id },
+      { _id: id },
       { $set: {[field]: field_to_type[field]} },
       { new: true }
     )
@@ -179,7 +186,7 @@ module.exports = {
   },
 
   updateEducation: async (_, { 
-    _id, 
+    id, 
     field, 
     stringValue,
     floatValue,
@@ -189,6 +196,13 @@ module.exports = {
 
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
+    }
+
+    const education = await models.Education.findById(id);
+    if (education && String(education.user) !== user.id) {
+      throw new ForbiddenError(
+        "You don't have permissions to update education!"
+        );
     }
     
     field_to_type = {
@@ -205,8 +219,154 @@ module.exports = {
     }
 
     return await models.Education.findOneAndUpdate(
-      { id: _id },
+      { _id: id },
       { $set: {[field]: field_to_type[field]} },
+      { new: true }
+    )
+  },
+
+  createCompany: async (_, args, { models, user }) => {
+    // Add logo
+    // Add founders
+    // Add job postings
+    const _user = await models.User.findById(user.id)
+    if (!user || !_user.accountType.includes('Recruiter')) {
+      throw new AuthenticationError(
+        'You must be signed in as a recruiter to create a profile'
+        );
+    }
+
+    return await models.Company.create({
+      name: args.name,
+      type: args.type,
+      website: args.website,
+      linkedIn: args.linkedIn,
+      github: args.github,
+      twitter: args.twitter,
+      markets: args.markets,
+      elevatorPitch: args.elevatorPitch,
+      whyYourCompany: args.whyYourCompany,
+      recruiters: mongoose.Types.ObjectId(user.id)
+    })
+  },
+
+  updateCompany: async (_, { 
+    id, 
+    field,
+    stringValue,
+    stringsValue,
+    companyTypeValue }, { models, user }) => {
+
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to create a profile');
+    }
+
+    const company = await models.Company.findById(id);
+    if (company && !company.recruiters.includes(user.id)) {
+      throw new ForbiddenError(
+        "You don't have permissions to update company profile!"
+        );
+    }
+
+    field_to_type = {
+      "name": stringValue,
+      "type": companyTypeValue,
+      "website": stringValue,
+      "linkedIn": stringValue,
+      "github": stringValue,
+      "twitter": stringValue,
+      "markets": stringsValue,
+      "elevatorPitch": stringValue,
+      "whyYourCompany": stringValue
+    }
+
+    if (!(field in field_to_type)) {
+      throw new ForbiddenError('Invalid field');
+    }
+
+    return await models.Company.findOneAndUpdate(
+      { _id: id },
+      { $set: {[field]: field_to_type[field]} },
+      { new: true }
+    )
+  },
+
+
+  createJobPosting: async (_, args, { models, user }) => {
+    // Add logo
+    // Add founders
+    // Add job postings
+    const _user = await models.User.findById(user.id)
+    if (!user || !_user.accountType.includes('Recruiter')) {
+      throw new AuthenticationError(
+        'You must be signed in as a recruiter to create a job posting'
+        );
+    }
+
+    return await models.JobPosting.create({
+      company: _user.company,
+      about: args.about,
+      experienceRequired: args.experienceRequired,
+      roles: args.roles,
+      jobType: args.jobType,
+      skillsRequired: args.skillsRequired,
+      hiringContact: _user,
+    })
+  },
+
+  updateJobPosting: async (_, { 
+    id, 
+    field,
+    stringValue,
+    stringsValue,
+    experienceValue,
+    rolesValue,
+    jobTypeValue }, { models, user }) => {
+
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to create a profile');
+    }
+
+    const jobPosting = await models.JobPosting.findById(id);
+    if (jobPosting && String(jobPosting.hiringContact) !== user.id) {
+      throw new ForbiddenError(
+        "You don't have permissions to update job posting!"
+        );
+    }
+
+    field_to_type = {
+      "about": stringValue,
+      "experienceRequired": experienceValue,
+      "roles": rolesValue,
+      "jobType": jobTypeValue,
+      "skillsRequired": stringsValue,
+    }
+
+    if (!(field in field_to_type)) {
+      throw new ForbiddenError('Invalid field');
+    }
+
+    return await models.JobPosting.findOneAndUpdate(
+      { _id: id },
+      { $set: {[field]: field_to_type[field]} },
+      { new: true }
+    )
+  },
+
+  applyToJob: async (_, { id }, { models, user }) => {
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to apply to a job');
+    }
+
+    // models.User.findOneAndUpdate(
+    //   { user.id },
+    //   { $push: {appliedTo: mongoose.Types.ObjectId(id)} },
+    //   { new: true }
+    // )
+
+    return await models.JobPosting.findOneAndUpdate(
+      { _id: id},
+      { $push: {applied: mongoose.Types.ObjectId(user.id)} },
       { new: true }
     )
   },

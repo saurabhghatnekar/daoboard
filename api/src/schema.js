@@ -112,9 +112,9 @@ type Company {
 type JobPosting {
     id: ID!
     company: Company!
-    about: String
+    about: String!
     experienceRequired: Experience
-    role: [Role!]!
+    roles: [Role!]!
     jobType: JobType!
     skillsRequired: [String]!
     hiringContact: User!
@@ -131,21 +131,6 @@ type Query {
     User queries
     """
     me: User!
-    company: Company!
-    myPostings: [JobPosting]!
-    jobPostingsByCompany: [JobPosting]!
-    jobPostingsByRole: [JobPosting]!
-    jobPostingsByJobType: [JobPosting]!
-    jobPostingsByCompanyType: [JobPosting]!
-
-    """
-    Recruiter queries
-    """
-    RecruiterPostings: [JobPosting]!
-    UsersByCurrentRole: [User]!
-    UsersByOpenToRoles: [User]!
-    UsersByJobType: [User]!
-    UsersByExperience: [User]!
 
 }
 
@@ -171,10 +156,10 @@ type Mutation {
     updateResume(pfp: Upload!): User!
 
     createJobExperience(
-        company: String!,
-        title: String!,
-        startDate: Date!,
-        endDate: Date!,
+        company: String!
+        title: String!
+        startDate: Date!
+        endDate: Date!
         description: String!
         positionType: jobExperienceType!
     ): JobExperience!
@@ -202,6 +187,44 @@ type Mutation {
         degreeTypeValue: DegreeType
         dateValue: Date
     ): Education!
+
+    createCompany(
+        name: String!
+        type: companyType!
+        website: String
+        linkedIn: String
+        github: String
+        twitter: String
+        markets: [String]!
+        elevatorPitch: String!
+        whyYourCompany: String!
+    ): Company!
+    updateCompany(
+        id: ID!
+        field: String!
+        stringValue: String
+        stringsValue: [String]
+        companyTypeValue: companyType
+    ): Company!
+
+    createJobPosting(
+        about: String!
+        experienceRequired: Experience
+        roles: [Role!]!
+        jobType: JobType!
+        skillsRequired: [String]!
+    ): JobPosting!
+    updateJobPosting(
+        id: ID!
+        field: String!
+        stringValue: String,
+        experienceValue: Experience,
+        rolesValue: [Role],
+        jobTypeValue: JobType,
+        skillsRequiredValue: [String]
+    ): JobPosting!
+
+    applyToJob(id: ID!): JobPosting!
 
 
 }

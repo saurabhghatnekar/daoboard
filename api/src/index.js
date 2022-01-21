@@ -20,13 +20,11 @@ const getUser = token => {
     try {
       return jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
-      console.log(err);
-     // throw new Error('Session invalid');
+     console.log(err);
+     throw new Error('Session invalid');
     }
   }
 };
-
-
 
 async function startServer() {
   const server = new ApolloServer({

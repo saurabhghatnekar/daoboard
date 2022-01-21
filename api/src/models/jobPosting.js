@@ -86,19 +86,18 @@ const jobPostingSchema = new mongoose.Schema(
             maxLength: 4000,
             required: true
         },
-        role: {
+        roles: [{
             type: String,
             enum: roles,
             required: true
-        },
-        jobType: [{
+        }],
+        jobType: {
             type: String,
             enum: ['FullTime', 'PartTime', 'Intern', 'Cofounder']
-        }],
+        },
         experienceRequired: {
             type: String,
             enum: experience,
-            required: true
         },
         skillsRequired: [{
             type: String
