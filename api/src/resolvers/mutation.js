@@ -16,6 +16,10 @@ module.exports = {
   signUp: async (_, { email, password }, { models }) => {
     email = email.trim().toLowerCase();
     const hashed = await bcrypt.hash(password, 10);
+    const user = await models.User.findOne( { email } );
+    if (user) {
+      throw new Error('User already exists');
+    }
     try {
       const user = await models.User.create({
         email,
