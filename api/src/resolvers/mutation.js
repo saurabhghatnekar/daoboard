@@ -314,7 +314,7 @@ module.exports = {
       roles: args.roles,
       jobType: args.jobType,
       skillsRequired: args.skillsRequired,
-      hiringContact: _user,
+      hiringContact: mongoose.Types.ObjectId(user.id),
     })
   },
 

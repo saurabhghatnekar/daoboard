@@ -125,7 +125,12 @@ type Query {
     uploads: [File]
     users: [User]!
     companies: [Company]!
-    jobPostings: [JobPosting]!
+    jobPostings(
+        companyName: String
+        companyType: companyType
+        roles: [Role]
+        jobTypes: [JobType]
+    ): [JobPosting]!
 
     """
     User queries

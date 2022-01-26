@@ -7,5 +7,8 @@ module.exports = {
     },
     appliedTo: async (user, __, { models }) => {
         return await models.JobPosting.find( { applied: user._id });
-    }
+    },
+    jobPostings: async (user, __, { models }) => {
+        return await models.JobPosting.find( { hiringContact: user._id });
+    },
 }
