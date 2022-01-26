@@ -121,6 +121,11 @@ type JobPosting {
     applied: [User]!
 }
 
+type SignInResponse {
+    token: String!
+    user: User!
+}
+
 type Query {
     uploads: [File]
     users: [User]!
@@ -141,9 +146,9 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
-    signUp(email: Email!, password: String!): String!
-    signIn(email: Email!, password: String!): String!
-
+    signUp(email: Email!, password: String!, firstName: String!, lastName:String!): String!
+    signIn(email: Email!, password: String!): SignInResponse!
+    
     updateProfile(
         field: String!
         stringValue: String

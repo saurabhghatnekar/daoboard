@@ -1,6 +1,6 @@
 require('dotenv').config()
 const { finished } = require('stream/promises');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {
   AuthenticationError,
@@ -13,16 +13,19 @@ const mongoose = require('mongoose');
 // maxLength validator not working
 
 module.exports = {
-  signUp: async (_, { email, password }, { models }) => {
+  signUp: async (_, { email, password, firstName, lastName }, { models }) => {
     email = email.trim().toLowerCase();
-    const hashed = await bcrypt.hash(password, 10);
     const user = await models.User.findOne( { email } );
     if (user) {
       throw new Error('User already exists');
     }
+    const hashed = await bcrypt.hash(password, 10);
+
     try {
       const user = await models.User.create({
         email,
+        firstName,
+        lastName,
         password: hashed
       });
       return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -35,7 +38,6 @@ module.exports = {
   signIn: async (_, { email, password }, { models }) => {
     email = email.trim().toLowerCase();
     const user = await models.User.findOne( { email } );
-    
     if (!user) {
       throw new AuthenticationError('Email not found');
     }
@@ -43,7 +45,10 @@ module.exports = {
     if (!valid) {
       throw new AuthenticationError('Invalid password');
     }
-    return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    return {
+      user: user,
+      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+    };
   },
 
   updateProfile: async (_, { 
