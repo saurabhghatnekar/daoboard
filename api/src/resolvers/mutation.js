@@ -241,11 +241,13 @@ module.exports = {
     const _user = await models.User.findById(user.id)
     if (!user || !_user.accountType.includes('Recruiter')) {
       throw new AuthenticationError(
-        'You must be signed in as a recruiter to create a profile'
+        'You must be signed in as a recruiter to create a company profile'
         );
     }
 
-    return await models.Company.create({
+    
+
+    const company = await models.Company.create({
       name: args.name,
       type: args.type,
       website: args.website,
@@ -257,6 +259,13 @@ module.exports = {
       whyYourCompany: args.whyYourCompany,
       recruiters: mongoose.Types.ObjectId(user.id)
     })
+
+    await models.User.findOneAndUpdate(
+      { _id: user.id },
+      { company: mongoose.Types.ObjectId(company) }
+    );
+
+    return company;
   },
 
   updateCompany: async (_, { 

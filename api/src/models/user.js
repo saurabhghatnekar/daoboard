@@ -84,6 +84,7 @@ const userSchema = new mongoose.Schema(
     {
         email: {
             type: mongoose.SchemaTypes.Email,
+            unique: true,
             required: true
         },
         password: {
@@ -110,6 +111,11 @@ const userSchema = new mongoose.Schema(
         },
         ens: {
             type: String,
+            unique: true
+        },
+        publicKey: {
+            type: String,
+            unique: true
         },
         pfp: {
             type: Buffer

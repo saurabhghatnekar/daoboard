@@ -85,8 +85,8 @@ type User {
     """
     Recruiter fields
     """
-    company: Company!
-    isFounder: Boolean!
+    company: Company
+    isFounder: Boolean
     jobPostings: [JobPosting]!
 
 }

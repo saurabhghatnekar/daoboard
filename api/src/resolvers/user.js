@@ -11,4 +11,7 @@ module.exports = {
     jobPostings: async (user, __, { models }) => {
         return await models.JobPosting.find( { hiringContact: user._id });
     },
+    company: async (user, __, { models }) => {
+        return await models.Company.findOne( { _id: user.company });
+    },
 }
