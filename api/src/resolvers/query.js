@@ -4,8 +4,45 @@ const mongoose = require('mongoose');
 module.exports = {
     // General queries
     uploads: (_, __) => {},
-    users: async (_, __, { models }) => {
-        return await models.User.find();
+    users: async (_, filter, { models }) => {
+        const shouldApplyFilters = Object.keys(filter).length !== 0;
+
+        if (!shouldApplyFilters) {
+            return await models.User.find();
+        }
+
+        const shouldApplyExperienceFilter = filter.experience;
+        const shouldApplyCurrentRolesFilter = filter.currentRoles;
+        const shouldApplyOpenToRolesFilter = filter.openToRoles;
+        const shouldApplyJobTypesFilter = filter.jobTypes;
+
+        var users = models.User;
+
+        if (shouldApplyExperienceFilter) {
+            users = users.find(
+                { experience: { $in: filter.experience } }
+            )
+        }
+
+        if (shouldApplyCurrentRolesFilter) {
+            users = users.find(
+                { currentRole: { $in: filter.currentRoles } }
+            )
+        }
+
+        if (shouldApplyOpenToRolesFilter) {
+            users = users.find(
+                { openToRoles: { $elemMatch: { $in: filter.openToRoles } } }
+            )
+        }
+
+        if (shouldApplyJobTypesFilter) {
+            users = users.find(
+                { jobType: { $elemMatch: { $in: filter.jobTypes } } }
+            )
+        }
+
+        return await users;
     },
     companies: async (_, __, { models }) => {
         return await models.Company.find();
@@ -44,18 +81,18 @@ module.exports = {
         }
 
         if (shouldApplyRolesFilter) {
-            jobPostings = await jobPostings.find(
+            jobPostings = jobPostings.find(
                 { roles: { $elemMatch: { $in: filter.roles } } }
             )
         }
 
         if (shouldApplyJobTypesFilter) {
-            jobPostings = await jobPostings.find(
+            jobPostings = jobPostings.find(
                 { jobTypes: { $in: filter.jobTypes } }
             )
         }
 
-        return jobPostings;
+        return await jobPostings;
 
 
         

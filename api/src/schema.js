@@ -128,7 +128,12 @@ type SignInResponse {
 
 type Query {
     uploads: [File]
-    users: [User]!
+    users(
+        experience: [Experience]
+        currentRoles: [Role]
+        openToRoles: [Role]
+        jobTypes: [JobType]
+    ): [User]!
     companies: [Company]!
     jobPostings(
         companyName: String
