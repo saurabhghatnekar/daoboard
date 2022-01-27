@@ -94,14 +94,6 @@ module.exports = {
 
         return await jobPostings;
 
-
-        
-
-    },
-
-    // User queries
-    me: async (_, __, { models, user }) => {
-        return await models.User.findById(user.id);
     },
     
 

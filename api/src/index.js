@@ -4,6 +4,8 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const { graphqlUploadExpress } = require('graphql-upload');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
+const cors = require('cors');
 
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
@@ -40,6 +42,8 @@ async function startServer() {
     await server.start();
   
     const app = express();
+    app.use(helmet());
+    app.use(cors());
   
     // This middleware should be added before calling `applyMiddleware`.
     app.use(graphqlUploadExpress());
