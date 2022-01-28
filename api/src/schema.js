@@ -30,7 +30,7 @@ type User {
     experience: Experience!
     openToRoles: [Role!]!
     bio: String
-
+    role: String!
     """
     Social profiles
     """
@@ -151,7 +151,7 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
-    signUp(email: Email!, password: String!, firstName: String!, lastName:String!): String!
+    signUp(email: Email!, password: String!, firstName: String!, lastName:String!, role: String!): String!
     signIn(email: Email!, password: String!): SignInResponse!
     
     updateProfile(

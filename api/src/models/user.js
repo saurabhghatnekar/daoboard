@@ -139,6 +139,9 @@ const userSchema = new mongoose.Schema(
             maxLength: 280
         },
 
+        role: {
+            type: String,
+        },
 
         website: {
             type: mongoose.SchemaTypes.Url

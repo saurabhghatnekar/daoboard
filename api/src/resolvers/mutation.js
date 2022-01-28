@@ -13,7 +13,7 @@ const mongoose = require('mongoose');
 // maxLength validator not working
 
 module.exports = {
-  signUp: async (_, { email, password, firstName, lastName }, { models }) => {
+  signUp: async (_, { email, password, firstName, lastName, role }, { models }) => {
     email = email.trim().toLowerCase();
     const user = await models.User.findOne( { email } );
     if (user) {
@@ -26,7 +26,9 @@ module.exports = {
         email,
         firstName,
         lastName,
+        role,
         password: hashed
+
       });
       return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     } catch (err) {
@@ -36,6 +38,7 @@ module.exports = {
   },
   
   signIn: async (_, { email, password }, { models }) => {
+    
     email = email.trim().toLowerCase();
     const user = await models.User.findOne( { email } );
     if (!user) {
