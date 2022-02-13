@@ -19,6 +19,14 @@ type User {
     accountType: [AccountType]
 
     """
+    Recruiter account info
+    """
+
+    company: Company
+    isFounder: Boolean
+    jobPostings: [JobPosting]!
+
+    """
     About
     """
 
@@ -82,13 +90,6 @@ type User {
 
     lookingForWebThree: String!
 
-    """
-    Recruiter fields
-    """
-    company: Company
-    isFounder: Boolean
-    jobPostings: [JobPosting]!
-
 }
 
 
@@ -101,7 +102,7 @@ type Company {
     linkedIn: String
     github: String
     twitter: String
-    markets: [String]!
+    markets: [Market]!
     elevatorPitch: String!
     whyYourCompany: String!
     recruiters: [User!]!
@@ -394,6 +395,16 @@ enum Experience {
     Sixyears
     Sevenyears
     moreEightYears
+}
+
+enum Market {
+    DeFi
+    Gaming
+    Metaverse
+    L1
+    L2
+    Social Media
+    NFTs
 }
 
 enum jobExperienceType {
