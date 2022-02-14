@@ -40,7 +40,7 @@ type User {
     bio: String
 
     """
-    Social profiles
+    Social media
     """
 
     website: String
@@ -285,34 +285,19 @@ enum Role {
         Engineering
         """
     
-        SoftwareEngineer
         MobileDeveloper
-        AndroidDeveloper
-        iOSDeveloper
-        FrontendEngineer
-        BackendEngineer
-        FullStackEngineer
-        SoftwareArchitect
-        SecurityEngineer
-        MachineLearningEngineer
-        EmbeddedEngineer
-        DataEngineer
-        DevOps
-        EngineeringManager
-        QAEngineer
-        DataScientist
+        FrontendDeveloper
+        BackendDeveloper
+        FullStackDeveloper
+        SoftwareDeveloper
+        SmartContractEngineer
+        BlockchainEngineer
     
         """
         Designer
         """
     
         UIUXDesigner
-        UserResearcher
-        VisualDesigner
-        CreativeDirector
-        DesignManager
-        GraphicDesigner
-        ProductDesigner
 
         """
         Product
@@ -324,64 +309,47 @@ enum Role {
         Operations
         """
     
-        FinanceAccounting
+        Finance
         HR
-        OfficeManager
-        Recruiter
         CustomerService
-        OperationsManager
-        ChiefOfStaff
 
         """
         Sales
         """
  
-        BusinessDevelopmentRepresentative
-        SalesDevelopmentRepresentative
-        AccountExecutive
-        BusinessDevelopmentManager
-        AccountManager
-        SalesManager
-        CustomerSuccessManager
+        Sales
     
         """
         Marketing
         """
   
+        Marketing
         GrowthHacker
-        MarketingManager
         ContentCreator
-        DigitalMarketingManager
-        ProductMarketingManager
-        Copywriter
         SocialMediaManager
-    
+            
         """
         Management
         """
   
-        CEO
-        CFO
-        CMO
-        COO
-        CTO
+        Management
     
         """
         Other Engineering
         """
 
         HardwareEngineer
-        MechanicalEngineer
-        SystemsEngineer
     
         """
         Other
         """
 
-        BusinessAnalyst
+        Artist
+        CommunityManager
         ProjectManager
         Attorney
-        DataAnalyst
+
+        
     
 }
 
@@ -405,6 +373,8 @@ enum Market {
     L2
     Social Media
     NFTs
+    Education
+    Marketplace
 }
 
 enum jobExperienceType {
