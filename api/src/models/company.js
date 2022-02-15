@@ -16,12 +16,7 @@ const companySchema = new mongoose.Schema(
             type: Buffer
         },
         type: {
-            type: String,
-            enum: [
-                'DAO', 
-                'CentralizedWithPlansForDAO', 
-                'CentralizedWithoutPlansForDAO'
-            ]
+            type: String
         },
         whyYourCompany: {
             type: String,

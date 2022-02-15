@@ -23,8 +23,7 @@ const jobExperienceSchema = new mongoose.Schema(
             maxLength: 280
         },
         jobExperienceType: {
-            type: String,
-            enum: ['Sales', 'Technical']
+            type: String
         },
         user: {
             type: mongoose.Schema.Types.ObjectId,

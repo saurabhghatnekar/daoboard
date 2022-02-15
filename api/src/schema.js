@@ -1,5 +1,7 @@
 const { gql } = require('apollo-server-express');
 
+// Add salary min, salary max, and hourly rate to job posting
+
 module.exports = gql`
 scalar Upload
 scalar Date
@@ -14,12 +16,20 @@ type User {
     id: ID!
     email: Email!
     password: String!
-    appliedTo: [JobPosting]!
     publicKey: String
     accountType: [AccountType]
 
     """
-    Recruiter account info
+    Match info
+    """
+
+    matchedTo: [JobPosting]!
+    matchedFrom: [JobPosting]!
+    matches: [JobPosting]!
+    rejected: [JobPosting]!
+
+    """
+    Recruiter info
     """
 
     company: Company
@@ -36,7 +46,7 @@ type User {
     pfp: File
     currentRole: Role!
     experience: Experience!
-    openToRoles: [Role!]!
+    openToRoles: [Role]!
     bio: String
 
     """
@@ -61,18 +71,6 @@ type User {
     education: [Education]!
 
     """
-    Skills
-    """
-
-    skills: [String]!
-
-    """
-    Resume
-    """
-
-    resume: File
-
-    """
     Status
     """
 
@@ -82,7 +80,7 @@ type User {
     Job type
     """
 
-    jobType: [JobType!]!
+    hereTo: [jobType!]!
 
     """
     What are you looking for in web3
@@ -104,7 +102,6 @@ type Company {
     twitter: String
     markets: [Market]!
     elevatorPitch: String!
-    whyYourCompany: String!
     recruiters: [User!]!
     founders: [User]!
     jobsPostings: [JobPosting]!
@@ -113,13 +110,16 @@ type Company {
 type JobPosting {
     id: ID!
     company: Company!
+    title: String!
     about: String!
     experienceRequired: Experience
     roles: [Role!]!
     jobType: JobType!
-    skillsRequired: [String]!
     hiringContact: User!
-    applied: [User]!
+    matchedTo: [User]!
+    matchedFrom: [User]!
+    matches: [User]!
+    rejected: [User]!
 }
 
 type SignInResponse {
@@ -176,32 +176,23 @@ type Mutation {
         title: String!
         startDate: Date!
         endDate: Date!
-        description: String!
-        positionType: jobExperienceType!
     ): JobExperience!
     updateJobExperience(
         id: ID!
         field: String!
         stringValue: String
         dateValue: Date
-        jobExperienceTypeValue: jobExperienceType
     ): JobExperience!
 
     createEducation(
-        college: String!,
-        graduation: Date,
-        degreeType: DegreeType,
-        major: String,
-        gpa: Float,
-        gpaMax: Float
+        college: String!
+        graduation: Date
     ): Education!
     updateEducation(
         id: ID!
         field: String!
-        stringValue: String
-        floatValue: Float
-        degreeTypeValue: DegreeType
         dateValue: Date
+        stringValue: String
     ): Education!
 
     createCompany(
@@ -228,7 +219,6 @@ type Mutation {
         experienceRequired: Experience
         roles: [Role!]!
         jobType: JobType!
-        skillsRequired: [String]!
     ): JobPosting!
     updateJobPosting(
         id: ID!
@@ -237,7 +227,6 @@ type Mutation {
         experienceValue: Experience,
         rolesValue: [Role],
         jobTypeValue: JobType,
-        skillsRequiredValue: [String]
     ): JobPosting!
 
     applyToJob(id: ID!): JobPosting!
@@ -256,22 +245,15 @@ type JobExperience {
     id: ID!
     company: String!
     title: String!
-    startDate: Date!
-    endDate: Date!
-    description: String
-    positionType: jobExperienceType!
+    startDate: Date
+    endDate: Date
     user: User!
 }
 
 type Education {
-    id: ID!
     college: String!
-    graduation: Date
-    degreeType: DegreeType
-    major: String
-    gpa: Float
-    gpaMax: Float
     user: User!
+    graduation: Date
 }
 
 enum AccountType {
@@ -292,12 +274,14 @@ enum Role {
         SoftwareDeveloper
         SmartContractEngineer
         BlockchainEngineer
+        HardwareEngineer
     
         """
-        Designer
+        Art and Design
         """
     
         UIUXDesigner
+        Artist
 
         """
         Product
@@ -333,36 +317,33 @@ enum Role {
         """
   
         Management
-    
+
         """
-        Other Engineering
+        Community
         """
 
-        HardwareEngineer
+        CommunityManager
+
+        """
+        Investing
+        """
+
+        InvestmentAnalyst
     
         """
         Other
         """
 
-        Artist
-        CommunityManager
         ProjectManager
         Attorney
-
         
     
 }
 
 enum Experience {
-    lessOneYear
-    Oneyear
-    Twoyears
-    Threeyears
-    Fouryears
-    Fiveyears
-    Sixyears
-    Sevenyears
-    moreEightYears
+    ZeroToTwoYears
+    TwoToFiveYears
+    MoreThanFiveYears
 }
 
 enum Market {
@@ -371,48 +352,33 @@ enum Market {
     Metaverse
     L1
     L2
-    Social Media
+    Social
     NFTs
     Education
-    Marketplace
-}
-
-enum jobExperienceType {
-    Sales
-    Technical
-}
-
-enum DegreeType {
-    Associate
-    Bachelor
-    Engineer
-    Master
-    JD
-    MBA
-    PhD
-    MD
-    HighSchool
-    NonDegreeProgram
+    Investing
     Other
 }
 
+enum jobExperienceType {
+    Nontechnical
+    Technical
+}
+
 enum Status {
-    Looking
     Open
     Closed
 }
 
-enum JobType {
-    FullTime
-    PartTime
-    Intern
-    Cofounder
+enum jobType {
+    FindFullTime
+    FindPartTime
+    StartSomethingNew
+    MakeFriendsAndHaveFun
 }
 
 enum companyType {
     DAO
-    CentralizedWithPlansForDAO
-    CentralizedWithoutPlansForDAO
+    Centralized
 }
 
 `;

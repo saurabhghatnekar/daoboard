@@ -23,19 +23,6 @@ const educationSchema = new mongoose.Schema(
         graduation: {
             type: Date
         },
-        degreeType: {
-            type: String,
-            enum: degreeTypes,
-        },
-        major: {
-            type: String,
-        },
-        gpa: {
-            type: Number
-        },
-        gpaMax: {
-            type: Number
-        },
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
