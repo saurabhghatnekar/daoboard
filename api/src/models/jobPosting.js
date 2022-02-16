@@ -8,14 +8,15 @@ const jobPostingSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'
         },
+        title: {
+            type: String
+        },
         about: {
             type: String,
-            maxLength: 4000,
-            required: true
+            maxLength: 4000
         },
         roles: [{
-            type: String,
-            required: true
+            type: String
         }],
         jobType: {
             type: String
@@ -23,17 +24,14 @@ const jobPostingSchema = new mongoose.Schema(
         experienceRequired: {
             type: String
         },
-        skillsRequired: [{
-            type: String
-        }],
-        hiringContact: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Recruiter'
-        }],
-        applied: [{
+        recruiter: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],
+        matchedFrom: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }]
 
         
     }

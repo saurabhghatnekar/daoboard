@@ -1,27 +1,15 @@
 const mongoose = require('mongoose');
 
-degreeTypes = [
-    "Associate",
-    "Bachelor",
-    "Engineer",
-    "Master",
-    "JD",
-    "MBA",
-    "PhD",
-    "MD",
-    "HighSchool",
-    "NonDegreeProgram",
-    "Other",
-]
-
 const educationSchema = new mongoose.Schema(
     {
         college: {
-            type: String,
-            required: true
+            type: String
         },
         graduation: {
             type: Date
+        },
+        DegreeType: {
+            type: String,
         },
         user: {
             type: mongoose.Schema.Types.ObjectId,

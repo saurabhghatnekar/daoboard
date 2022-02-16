@@ -4,26 +4,19 @@ const jobExperienceSchema = new mongoose.Schema(
     {
         company: {
             type: String,
-            required: true
+            // required: true
         },
         title: {
             type: String,
-            required: true
+            // required: true
         },
         startDate: {
             type: Date,
-            required: true
+            // required: true
         },
         endDate: {
             type: Date,
-            required: true
-        },
-        description: {
-            type: String,
-            maxLength: 280
-        },
-        jobExperienceType: {
-            type: String
+            // required: true
         },
         user: {
             type: mongoose.Schema.Types.ObjectId,

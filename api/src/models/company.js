@@ -9,18 +9,13 @@ const companySchema = new mongoose.Schema(
             ref: 'JobPosting'
         }],
         name: {
-            type: String,
-            required: true
+            type: String
         },
         logo: {
             type: Buffer
         },
         type: {
             type: String
-        },
-        whyYourCompany: {
-            type: String,
-            maxLength: 2000
         },
         elevatorPitch: {
             type: String,
@@ -31,11 +26,11 @@ const companySchema = new mongoose.Schema(
         }],
         recruiters: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Recruiter'
+            ref: 'User'
         }],
         founders: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Recruiter'
+            ref: 'User'
         }],
         website: {
             type: mongoose.SchemaTypes.Url

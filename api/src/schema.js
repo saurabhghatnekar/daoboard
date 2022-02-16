@@ -23,10 +23,10 @@ type User {
     Match info
     """
 
-    matchedTo: [JobPosting]!
-    matchedFrom: [JobPosting]!
-    matches: [JobPosting]!
-    rejected: [JobPosting]!
+    matchedTo: [User]!
+    matchedFrom: [User]!
+    matches: [User]!
+    rejectedJobs: [JobPosting]!
 
     """
     Recruiter info
@@ -35,6 +35,7 @@ type User {
     company: Company
     isFounder: Boolean
     jobPostings: [JobPosting]!
+    rejectedJobSeekers: [User]!
 
     """
     About
@@ -115,11 +116,8 @@ type JobPosting {
     experienceRequired: Experience
     roles: [Role!]!
     jobType: JobType!
-    hiringContact: User!
-    matchedTo: [User]!
+    recruiter: User!
     matchedFrom: [User]!
-    matches: [User]!
-    rejected: [User]!
 }
 
 type SignInResponse {
@@ -254,6 +252,7 @@ type Education {
     college: String!
     user: User!
     graduation: Date
+    degreeType: DegreeType
 }
 
 enum AccountType {
@@ -344,6 +343,14 @@ enum Experience {
     ZeroToTwoYears
     TwoToFiveYears
     MoreThanFiveYears
+}
+
+enum DegreeType {
+    HighSchool
+    Associate
+    Bachelor
+    Master
+    PhD
 }
 
 enum Market {
