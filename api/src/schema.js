@@ -1,6 +1,8 @@
 const { gql } = require('apollo-server-express');
 
 // Add salary min, salary max, and hourly rate to job posting
+// Add messages
+// Figure out files
 
 module.exports = gql`
 scalar Upload
