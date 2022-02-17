@@ -1,6 +1,5 @@
 const { gql } = require('apollo-server-express');
 
-// Add salary min, salary max, and hourly rate to job posting
 // Add messages
 // Figure out files
 
@@ -48,7 +47,6 @@ type User {
     ens: String
     pfp: File
     currentRole: Role!
-    experience: Experience!
     openToRoles: [Role]!
     bio: String
 
@@ -115,7 +113,6 @@ type JobPosting {
     company: Company!
     title: String!
     about: String!
-    experienceRequired: Experience
     roles: [Role!]!
     jobType: JobType!
     recruiter: User!
@@ -130,7 +127,6 @@ type SignInResponse {
 type Query {
     uploads: [File]
     users(
-        experience: [Experience]
         currentRoles: [Role]
         openToRoles: [Role]
         jobTypes: [JobType]
@@ -164,7 +160,6 @@ type Mutation {
         rolesValue: [Role]
         statusValue: Status
         jobTypesValue: [JobType]
-        experienceValue: Experience
         booleanValue: Boolean
     ): User!
 
@@ -216,7 +211,6 @@ type Mutation {
 
     createJobPosting(
         about: String!
-        experienceRequired: Experience
         roles: [Role!]!
         jobType: JobType!
     ): JobPosting!
@@ -224,7 +218,6 @@ type Mutation {
         id: ID!
         field: String!
         stringValue: String,
-        experienceValue: Experience,
         rolesValue: [Role],
         jobTypeValue: JobType,
     ): JobPosting!
@@ -339,12 +332,6 @@ enum Role {
         Attorney
         
     
-}
-
-enum Experience {
-    ZeroToTwoYears
-    TwoToFiveYears
-    MoreThanFiveYears
 }
 
 enum DegreeType {

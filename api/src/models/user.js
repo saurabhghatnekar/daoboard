@@ -58,10 +58,6 @@ const userSchema = new mongoose.Schema(
             type: String
             // required: true
         },
-        experience: {
-            type: String
-            // required: true
-        },
         openToRoles: [{
             type: String
         }],

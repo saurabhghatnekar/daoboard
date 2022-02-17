@@ -21,9 +21,6 @@ const jobPostingSchema = new mongoose.Schema(
         jobType: {
             type: String
         },
-        experienceRequired: {
-            type: String
-        },
         recruiter: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
