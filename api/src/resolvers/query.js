@@ -44,17 +44,19 @@ module.exports = {
 
         return await users;
     },
-    companies: async (_, __, { models }) => {
+    companies: async (_, __, { models, user }) => {
         return await models.Company.find();
     },
     jobPostings: async (_, filter, { models }) => {
         const shouldApplyFilters = Object.keys(filter).length !== 0;
         
         if (!shouldApplyFilters) {
-            return await models.JobPosting.find();
+            return await models.JobPosting.find(
+                { _id: { $nin: user.rejected  } }
+            );
         }
 
-        const shouldApplyCompanyNameFilter = filter.companyName != null;
+        const shouldApplyMarketFilter = filter.market != null;
         const shouldApplyCompanyTypeFilter = filter.companyType != null;
         const shouldApplyRolesFilter = filter.roles;
         const shouldApplyJobTypesFilter = filter.jobTypes;
@@ -62,9 +64,13 @@ module.exports = {
         var jobPostings = models.JobPosting;
         var company;
 
-        if (shouldApplyCompanyNameFilter) {
+        jobPostings = jobPostings.find(
+            { _id: { $nin: user.rejected  } }
+        );
+
+        if (shouldApplyMarketFilter) {
             company = await models.Company.findOne({
-                name: filter.companyName
+                markets: filter.markets
             });
             jobPostings = jobPostings.find(
                 { company }
@@ -93,7 +99,12 @@ module.exports = {
         }
 
         return await jobPostings;
-
+    },
+    JobPosting: async (_, { id }, { models }) => {
+        return await models.JobPosting.findById(id)
+    },
+    Company: async (_, { id }, { models }) => {
+        return await models.Company.findById(id)
     },
     
 

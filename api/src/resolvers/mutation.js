@@ -371,20 +371,63 @@ module.exports = {
     )
   },
 
-  applyToJob: async (_, { id }, { models, user }) => {
+  matchToJobPosting: async (_, { id }, { models, user }) => {
     if (!user) {
-      throw new AuthenticationError('You must be signed in to apply to a job');
+      throw new AuthenticationError('You must be signed in to match');
     }
 
-    // models.User.findOneAndUpdate(
-    //   { user.id },
-    //   { $push: {appliedTo: mongoose.Types.ObjectId(id)} },
-    //   { new: true }
-    // )
+    const jobPosting = await models.JobPosting.findById(id);
+    const recruiter = jobPosting.recruiter;
 
-    return await models.JobPosting.findOneAndUpdate(
-      { _id: id},
-      { $push: {applied: mongoose.Types.ObjectId(user.id)} },
+    models.User.findOneAndUpdate(
+       { recruiter },
+       { $push: {matchedFrom: mongoose.Types.ObjectId(user.id)} },
+     )
+
+     if (recruiter.matchedTo.includes(user.id)) {
+       models.User.findOneAndUpdate(
+         { user },
+         { $push: {matches: mongoose.Types.ObjectId(recruiter.id)} },
+       ),
+       models.User.findOneAndUpdate(
+        { recruiter },
+        { $push: {matches: mongoose.Types.ObjectId(user.id)} },
+      )
+     }
+
+    return await models.User.findOneAndUpdate(
+      { user },
+      { $push: {matchedTo: mongoose.Types.ObjectId(recruiter.id)} },
+      { new: true }
+    )
+  },
+
+  matchToJobSeeker: async (_, { id }, { models, user }) => {
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to match');
+    }
+
+    const jobSeeker = await models.User.findById(id);
+
+    models.User.findOneAndUpdate(
+       { jobSeeker },
+       { $push: {matchedFrom: mongoose.Types.ObjectId(user.id)} },
+     )
+
+     if (jobSeeker.matchedTo.includes(user.id)) {
+      models.User.findOneAndUpdate(
+        { user },
+        { $push: {matches: mongoose.Types.ObjectId(jobSeeker.id)} },
+      ),
+      models.User.findOneAndUpdate(
+       { jobSeeker },
+       { $push: {matches: mongoose.Types.ObjectId(user.id)} },
+     )
+    }
+
+    return await models.User.findOneAndUpdate(
+      { user },
+      { $push: {matchedTo: mongoose.Types.ObjectId(jobSeeker.id)} },
       { new: true }
     )
   },

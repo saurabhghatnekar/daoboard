@@ -21,14 +21,10 @@ const jobPostingSchema = new mongoose.Schema(
         jobType: {
             type: String
         },
-        recruiter: [{
+        recruiter: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
-        }],
-        matchedFrom: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        }]
+        }
 
         
     }

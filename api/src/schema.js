@@ -116,7 +116,6 @@ type JobPosting {
     roles: [Role!]!
     jobType: JobType!
     recruiter: User!
-    matchedFrom: [User]!
 }
 
 type SignInResponse {
@@ -133,11 +132,13 @@ type Query {
     ): [User]!
     companies: [Company]!
     jobPostings(
-        companyName: String
+        market: [Market]
         companyType: companyType
         roles: [Role]
         jobTypes: [JobType]
     ): [JobPosting]!
+    jobPosting(id: ID!): JobPosting!
+    company(id: ID!): Company!
 
     """
     User queries
@@ -222,7 +223,8 @@ type Mutation {
         jobTypeValue: JobType,
     ): JobPosting!
 
-    applyToJob(id: ID!): JobPosting!
+    matchToJobPosting(id: ID!): User!
+    matchToJobSeeker(id: ID!): User!
 
 
 }
