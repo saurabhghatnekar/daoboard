@@ -56,7 +56,7 @@ module.exports = {
             );
         }
 
-        const shouldApplyMarketFilter = filter.market != null;
+        const shouldApplyMarketFilter = filter.market;
         const shouldApplyCompanyTypeFilter = filter.companyType != null;
         const shouldApplyRolesFilter = filter.roles;
         const shouldApplyJobTypesFilter = filter.jobTypes;
