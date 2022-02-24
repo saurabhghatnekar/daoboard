@@ -56,7 +56,7 @@ module.exports = {
             );
         }
 
-        const shouldApplyMarketFilter = filter.market;
+        const shouldApplyMarketsFilter = filter.markets;
         const shouldApplyCompanyTypeFilter = filter.companyType != null;
         const shouldApplyRolesFilter = filter.roles;
         const shouldApplyJobTypesFilter = filter.jobTypes;
@@ -68,7 +68,7 @@ module.exports = {
             { _id: { $nin: user.rejected  } }
         );
 
-        if (shouldApplyMarketFilter) {
+        if (shouldApplyMarketsFilter) {
             company = await models.Company.findOne({
                 markets: filter.markets
             });

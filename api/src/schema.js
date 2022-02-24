@@ -1,7 +1,7 @@
 const { gql } = require('apollo-server-express');
 
 // Add messages
-// Figure out files
+// Figure out files (and put in updateProfile function)
 
 module.exports = gql`
 scalar Upload
@@ -132,7 +132,7 @@ type Query {
     ): [User]!
     companies: [Company]!
     jobPostings(
-        market: [Market]
+        markets: [Market]
         companyType: companyType
         roles: [Role]
         jobTypes: [JobType]
@@ -149,19 +149,36 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
-    signUp(email: Email!, password: String!, firstName: String!, lastName:String!): String!
+    signUp(
+        email: Email!
+        password: String!
+        firstName: String!
+        lastName: String!): String!
     signIn(email: Email!, password: String!): SignInResponse!
     
+    company: Company
+    isFounder: Boolean
+    jobPostings: [JobPosting]!
+    rejectedJobSeekers: [User]!
+
+
     updateProfile(
-        field: String!
-        stringValue: String
-        stringsValue: [String]
-        accountTypesValue: [AccountType]
-        roleValue: Role
-        rolesValue: [Role]
-        statusValue: Status
-        jobTypesValue: [JobType]
-        booleanValue: Boolean
+        firstName: String
+        lastName: String
+        publicKey: String
+        ens: String
+        accountType: [AccountType]
+        currentRole: Role
+        openToRoles: [Role]
+        bio: String
+        website: String
+        linkedIn: String
+        github: String
+        twitter: String
+        status: Status
+        hereTo: [JobType]
+        lookingForWebThree: String
+        isFounder: Boolean
     ): User!
 
     updatePFP(pfp: Upload!): User!

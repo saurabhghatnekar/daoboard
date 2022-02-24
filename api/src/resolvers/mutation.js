@@ -51,61 +51,128 @@ module.exports = {
     };
   },
 
-  updateProfile: async (_, { 
-      field, 
-      stringValue,
-      stringsValue,
-      accountTypesValue,
-      roleValue,
-      rolesValue,
-      statusValue,
-      jobTypesValue,
-      experienceValue,
-      booleanValue
-    }, { models, user }) => {
-
-    // Takes two parameters
-    // `field`: select a key from `field_to_type` to update
-    // Second parameter is `field_to_type[field]`
-    // Set second parameter's value based on type
-    // For example, if second parameter is `stringValue`, value
-    // can be set to "James"
-
-    // HIGHLY inelegant. There has to be a better way to do this.
+  updateProfile: async (_, params, { models, user }) => {
 
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
 
-    field_to_type = {
-      "firstName": stringValue,
-      "lastName": stringValue,
-      "ens": stringValue,
-      "bio": stringValue,
-      "accountType": accountTypesValue,
-      "currentRole": roleValue,
-      "openToRoles": rolesValue,
-      "website": stringValue,
-      "linkedIn": stringValue,
-      "github": stringValue,
-      "twitter": stringValue,
-      "skills": stringsValue,
-      "status": statusValue,
-      "jobType": jobTypesValue,
-      "lookingForWebThree": stringValue,
-      "experience": experienceValue,
-      "isFounder": booleanValue
-    }
+    const shouldUpdateFirstName = params.firstName != null;
+    const shouldUpdateLastName = params.lastName != null;
+    const shouldUpdatePublicKey = params.publicKey != null;
+    const shouldUpdateENS = params.ens != null;
+    const shouldUpdateAccountType = params.accountType;
+    const shouldUpdateCurrentRole = params.currentRole != null;
+    const shouldUpdateOpenToRoles = params.openToRoles;
+    const shouldUpdateBio = params.bio != null;
+    const shouldUpdateWebsite = params.website != null;
+    const shouldUpdateLinkedIn = params.linkedIn != null;
+    const shouldUpdateGithub = params.github != null;
+    const shouldUpdateTwitter = params.twitter != null;
+    const shouldUpdateStatus = params.status != null;
+    const shouldUpdateHereTo = params.hereTo
+    const shouldUpdateLookingForWebThree = params.lookingForWebThree != null;
+    const shouldUpdateIsFounder = params.isFounder != null;
 
-    if (!(field in field_to_type)) {
-      throw new ForbiddenError('Invalid field');
-    }
+    var user = models.User.findById(user.id);
 
-    return await models.User.findOneAndUpdate(
-      { _id: user.id },
-      { $set: { [field]: field_to_type[field] } },
-      { new: true }
-    )
+      if (shouldUpdateFirstName) {
+          user.update(
+            { $set: { firstName: params.firstName } }
+          )
+      }
+
+      if (shouldUpdateLastName) {
+        user.update(
+          { $set: { lastName: params.lastName } }
+        )
+      }
+
+      if (shouldUpdatePublicKey) {
+        user.update(
+          { $set: { publicKey: params.publicKey } }
+        )
+      }
+
+      if (shouldUpdateENS) {
+        user.update(
+          { $set: { ens: params.ens } }
+        )
+      }
+
+      if (shouldUpdateAccountType) {
+        user.update(
+          { $set: { accountType: params.accountType } }
+        )
+      }
+
+      if (shouldUpdateCurrentRole) {
+        user.update(
+          { $set: { currentRole: params.currentRole } }
+        )
+      }
+
+      if (shouldUpdateOpenToRoles) {
+        user.update(
+          { $set: { openToRoles: params.openToRoles } }
+        )
+      }
+
+      if (shouldUpdateBio) {
+        user.update(
+          { $set: { bio: params.bio } }
+        )
+      }
+
+      if (shouldUpdateWebsite) {
+        user.update(
+          { $set: { website: params.website } }
+        )
+      }
+
+      if (shouldUpdateLinkedIn) {
+        user.update(
+          { $set: { linkedIn: params.linkedIn } }
+        )
+      }
+
+      if (shouldUpdateGithub) {
+        user.update(
+          { $set: { github: params.github } }
+        )
+      }
+
+      if (shouldUpdateTwitter) {
+        user.update(
+          { $set: { twitter: params.twitter } }
+        )
+      }
+
+      if (shouldUpdateStatus) {
+        user.update(
+          { $set: { status: params.status } }
+        )
+      }
+
+      if (shouldUpdateHereTo) {
+        user.update(
+          { $set: { hereTo: params.hereTo } }
+        )
+      }
+
+      if (shouldUpdateLookingForWebThree) {
+        user.update(
+          { $set: { lookingForWebThree: params.lookingForWebThree } }
+        )
+      }
+
+      if (shouldUpdateIsFounder) {
+        user.update(
+          { $set: { isFounder: params.isFounder } }
+        )
+      }
+
+    return await models.users.findById(users.id);
   },
 
   updatePFP: async (_, { pfp }, { models, user }) => {
