@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 // Fix singleUpload!
 // Create updatePFP and updateResume logic (probably combine)
 // maxLength validator not working
+// Add logo to createCompany
 
 module.exports = {
   signUp: async (_, { email, password, firstName, lastName }, { models }) => {
@@ -72,7 +73,6 @@ module.exports = {
     const shouldUpdateStatus = params.status != null;
     const shouldUpdateHereTo = params.hereTo
     const shouldUpdateLookingForWebThree = params.lookingForWebThree != null;
-    const shouldUpdateIsFounder = params.isFounder != null;
 
     var user = models.User.findById(user.id);
 
@@ -166,23 +166,11 @@ module.exports = {
         )
       }
 
-      if (shouldUpdateIsFounder) {
-        user.update(
-          { $set: { isFounder: params.isFounder } }
-        )
-      }
 
     return await models.users.findById(users.id);
   },
 
   updatePFP: async (_, { pfp }, { models, user }) => {
-    if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
-    }
-    return // Update this
-  },
-
-  updateResume: async (_, { resume }, { models, user }) => {
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
@@ -200,119 +188,119 @@ module.exports = {
       title: args.title,
       startDate: args.startDate,
       endDate: args.endDate,
-      description: args.description,
-      positionType: args.positionType,
       user: mongoose.Types.ObjectId(user.id)
     })
   },
 
-  updateJobExperience: async (_, { 
-    id, 
-    field,
-    stringValue,
-    dateValue, 
-    jobExperienceTypeValue }, { models, user }) => {
+  updateJobExperience: async (_, params, { models, user }) => {
 
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
 
-    const jobExperience = await models.JobExperience.findById(id);
+    const jobExperience = models.JobExperience.findById(params.id);
+
     if (jobExperience && String(jobExperience.user) !== user.id) {
       throw new ForbiddenError(
         "You don't have permissions to update job experience!"
         );
     }
 
-    field_to_type = {
-      "company": stringValue,
-      "title": stringValue,
-      "description": stringValue,
-      "startDate": dateValue,
-      "endDate": dateValue,
-      "positionType": jobExperienceTypeValue
+    const shouldUpdateCompany = params.company != null;
+    const shouldUpdateTitle = params.title != null;
+    const shouldUpdateStartDate = params.startDate != null;
+    const shouldUpdateEndDate = params.endDate != null;
+
+    if (shouldUpdateCompany) {
+      jobExperience.update(
+        { $set: { company: params.company } }
+      )
     }
 
-    if (!(field in field_to_type)) {
-      throw new ForbiddenError('Invalid field');
+    if (shouldUpdateTitle) {
+      jobExperience.update(
+        { $set: { title: params.title } }
+      )
     }
 
-    return await models.JobExperience.findOneAndUpdate(
-      { _id: id },
-      { $set: {[field]: field_to_type[field]} },
-      { new: true }
-    )
+    if (shouldUpdateStartDate) {
+      jobExperience.update(
+        { $set: { startDate: params.startDate } }
+      )
+    }
+
+    if (shouldUpdateEndDate) {
+      jobExperience.update(
+        { $set: { endDate: params.endDate } }
+      )
+    }
+
+    return await models.JobExperience.findById(params.id);
   },
 
 
   createEducation: async (_, args, { models, user }) => {
     if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
+      throw new AuthenticationError(
+        'You must be signed in to create a profile');
     }
 
     return await models.Education.create({
-      college: args.college,
+      school: args.school,
       graduation: args.graduation,
       degreeType: args.degreeType,
-      major: args.major,
-      gpa: args.gpa,
-      gpaMax: args.gpaMax,
       user: mongoose.Types.ObjectId(user.id)
     })
   },
 
-  updateEducation: async (_, { 
-    id, 
-    field, 
-    stringValue,
-    floatValue,
-    degreeTypeValue,
-    dateValue }, 
-  { models, user }) => {
+  updateEducation: async (_, params, { models, user }) => {
 
     if (!user) {
-      throw new AuthenticationError('You must be signed in to create a profile');
+      throw new AuthenticationError(
+        'You must be signed in to create a profile');
     }
 
-    const education = await models.Education.findById(id);
+    const education = await models.Education.findById(params.id);
+
     if (education && String(education.user) !== user.id) {
       throw new ForbiddenError(
         "You don't have permissions to update education!"
         );
     }
     
-    field_to_type = {
-      "college": stringValue,
-      "major": stringValue,
-      "graduation": dateValue,
-      "degreeType": degreeTypeValue,
-      "gpa": floatValue,
-      "gpaMax": floatValue
+    const shouldUpdateSchool = params.school != null;
+    const shouldUpdateGraduation = params.graduation != null;
+    const shouldUpdateStartDegreeType = params.degreeType != null;
+
+    if (shouldUpdateSchool) {
+      education.update(
+        { $set: { school: params.school } }
+      )
     }
 
-    if (!(field in field_to_type)) {
-      throw new ForbiddenError('Invalid field');
+    if (shouldUpdateGraduation) {
+      education.update(
+        { $set: { graduation: params.graduation } }
+      )
     }
 
-    return await models.Education.findOneAndUpdate(
-      { _id: id },
-      { $set: {[field]: field_to_type[field]} },
-      { new: true }
-    )
+    if (shouldUpdateStartDegreeType) {
+      education.update(
+        { $set: { degreeType: params.degreeType } }
+      )
+    }
+
+    return await models.Education.findById(params.id);
   },
 
   createCompany: async (_, args, { models, user }) => {
     // Add logo
-    // Add founders
-    // Add job postings
     const _user = await models.User.findById(user.id)
     if (!user || !_user.accountType.includes('Recruiter')) {
       throw new AuthenticationError(
         'You must be signed in as a recruiter to create a company profile'
         );
     }
-
-    
 
     const company = await models.Company.create({
       name: args.name,
@@ -323,7 +311,6 @@ module.exports = {
       twitter: args.twitter,
       markets: args.markets,
       elevatorPitch: args.elevatorPitch,
-      whyYourCompany: args.whyYourCompany,
       recruiters: mongoose.Types.ObjectId(user.id)
     })
 
@@ -335,52 +322,81 @@ module.exports = {
     return company;
   },
 
-  updateCompany: async (_, { 
-    id, 
-    field,
-    stringValue,
-    stringsValue,
-    companyTypeValue }, { models, user }) => {
+  updateCompany: async (_, params, { models, user }) => {
 
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
 
-    const company = await models.Company.findById(id);
+    const company = await models.Company.findById(params.id);
     if (company && !company.recruiters.includes(user.id)) {
       throw new ForbiddenError(
         "You don't have permissions to update company profile!"
         );
     }
 
-    field_to_type = {
-      "name": stringValue,
-      "type": companyTypeValue,
-      "website": stringValue,
-      "linkedIn": stringValue,
-      "github": stringValue,
-      "twitter": stringValue,
-      "markets": stringsValue,
-      "elevatorPitch": stringValue,
-      "whyYourCompany": stringValue
+    const shouldUpdateName = params.name != null;
+    const shouldUpdateType = params.type != null;
+    const shouldUpdateWebsite = params.website != null;
+    const shouldUpdateLinkedIn = params.linkedIn != null;
+    const shouldUpdateGithub = params.github != null;
+    const shouldUpdateTwitter = params.twitter != null;
+    const shouldUpdateMarkets = params.markets;
+    const shouldUpdateElevatorPitch = params.elevatorPitch != null;
+
+    if (shouldUpdateName) {
+      company.update(
+        { $set: { name: params.name } }
+      )
     }
 
-    if (!(field in field_to_type)) {
-      throw new ForbiddenError('Invalid field');
+    if (shouldUpdateType) {
+      company.update(
+        { $set: { type: params.type } }
+      )
     }
 
-    return await models.Company.findOneAndUpdate(
-      { _id: id },
-      { $set: {[field]: field_to_type[field]} },
-      { new: true }
-    )
+    if (shouldUpdateWebsite) {
+      company.update(
+        { $set: { website: params.website } }
+      )
+    }
+
+    if (shouldUpdateLinkedIn) {
+      company.update(
+        { $set: { linkedIn: params.linkedIn } }
+      )
+    }
+
+    if (shouldUpdateGithub) {
+      company.update(
+        { $set: { github: params.github } }
+      )
+    }
+
+    if (shouldUpdateTwitter) {
+      company.update(
+        { $set: { twitter: params.twitter } }
+      )
+    }
+
+    if (shouldUpdateMarkets) {
+      company.update(
+        { $set: { markets: params.markets } }
+      )
+    }
+
+    if (shouldUpdateElevatorPitch) {
+      company.update(
+        { $set: { elevatorPitch: params.elevatorPitch } }
+      )
+    }
+
+    return await models.Company.findById(params.id);
   },
 
 
   createJobPosting: async (_, args, { models, user }) => {
-    // Add logo
-    // Add founders
-    // Add job postings
     const _user = await models.User.findById(user.id)
     if (!user || !_user.accountType.includes('Recruiter')) {
       throw new AuthenticationError(
@@ -390,23 +406,15 @@ module.exports = {
 
     return await models.JobPosting.create({
       company: _user.company,
+      title: args.title,
       about: args.about,
-      experienceRequired: args.experienceRequired,
       roles: args.roles,
       jobType: args.jobType,
-      skillsRequired: args.skillsRequired,
-      hiringContact: mongoose.Types.ObjectId(user.id),
+      recruiter: mongoose.Types.ObjectId(user.id),
     })
   },
 
-  updateJobPosting: async (_, { 
-    id, 
-    field,
-    stringValue,
-    stringsValue,
-    experienceValue,
-    rolesValue,
-    jobTypeValue }, { models, user }) => {
+  updateJobPosting: async (_, params, { models, user }) => {
 
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
@@ -419,23 +427,36 @@ module.exports = {
         );
     }
 
-    field_to_type = {
-      "about": stringValue,
-      "experienceRequired": experienceValue,
-      "roles": rolesValue,
-      "jobType": jobTypeValue,
-      "skillsRequired": stringsValue,
+    const shouldUpdateTitle = params.title != null;
+    const shouldUpdateAbout = params.about != null;
+    const shouldUpdateRoles = params.roles;
+    const shouldUpdateJobType = params.jobType != null;
+
+    if (shouldUpdateTitle) {
+      company.update(
+        { $set: { title: params.title } }
+      )
     }
 
-    if (!(field in field_to_type)) {
-      throw new ForbiddenError('Invalid field');
+    if (shouldUpdateAbout) {
+      company.update(
+        { $set: { about: params.about } }
+      )
     }
 
-    return await models.JobPosting.findOneAndUpdate(
-      { _id: id },
-      { $set: {[field]: field_to_type[field]} },
-      { new: true }
-    )
+    if (shouldUpdateRoles) {
+      company.update(
+        { $set: { roles: params.roles } }
+      )
+    }
+
+    if (shouldUpdateJobType) {
+      company.update(
+        { $set: { jobType: params.jobType } }
+      )
+    }
+
+    return await models.JobPosting.findById(id);
   },
 
   matchToJobPosting: async (_, { id }, { models, user }) => {

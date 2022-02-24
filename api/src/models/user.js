@@ -119,10 +119,7 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'
         },
-        isFounder: {
-            type: Boolean,
-            // required: true
-        },
+
         rejectedJobSeekers: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'

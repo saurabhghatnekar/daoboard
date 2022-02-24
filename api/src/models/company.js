@@ -28,10 +28,6 @@ const companySchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],
-        founders: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        }],
         website: {
             type: mongoose.SchemaTypes.Url
         },

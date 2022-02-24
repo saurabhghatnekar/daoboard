@@ -34,7 +34,6 @@ type User {
     """
 
     company: Company
-    isFounder: Boolean
     jobPostings: [JobPosting]!
     rejectedJobSeekers: [User]!
 
@@ -104,7 +103,6 @@ type Company {
     markets: [Market]!
     elevatorPitch: String!
     recruiters: [User!]!
-    founders: [User]!
     jobsPostings: [JobPosting]!
 }
 
@@ -153,14 +151,9 @@ type Mutation {
         email: Email!
         password: String!
         firstName: String!
-        lastName: String!): String!
+        lastName: String!
+    ): String!
     signIn(email: Email!, password: String!): SignInResponse!
-    
-    company: Company
-    isFounder: Boolean
-    jobPostings: [JobPosting]!
-    rejectedJobSeekers: [User]!
-
 
     updateProfile(
         firstName: String
@@ -178,11 +171,9 @@ type Mutation {
         status: Status
         hereTo: [JobType]
         lookingForWebThree: String
-        isFounder: Boolean
     ): User!
 
     updatePFP(pfp: Upload!): User!
-    updateResume(pfp: Upload!): User!
 
     createJobExperience(
         company: String!
@@ -192,20 +183,22 @@ type Mutation {
     ): JobExperience!
     updateJobExperience(
         id: ID!
-        field: String!
-        stringValue: String
-        dateValue: Date
+        company: String
+        title: String
+        startDate: Date
+        endDate: Date
     ): JobExperience!
 
     createEducation(
-        college: String!
+        school: String!
         graduation: Date
+        degreeType: DegreeType
     ): Education!
     updateEducation(
         id: ID!
-        field: String!
-        dateValue: Date
-        stringValue: String
+        school: String
+        graduation: Date
+        degreeType: DegreeType
     ): Education!
 
     createCompany(
@@ -217,27 +210,31 @@ type Mutation {
         twitter: String
         markets: [String]!
         elevatorPitch: String!
-        whyYourCompany: String!
     ): Company!
     updateCompany(
         id: ID!
-        field: String!
-        stringValue: String
-        stringsValue: [String]
-        companyTypeValue: companyType
+        name: String!
+        type: companyType!
+        website: String
+        linkedIn: String
+        github: String
+        twitter: String
+        markets: [String]!
+        elevatorPitch: String!
     ): Company!
 
     createJobPosting(
+        title: title!
         about: String!
         roles: [Role!]!
         jobType: JobType!
     ): JobPosting!
     updateJobPosting(
         id: ID!
-        field: String!
-        stringValue: String,
-        rolesValue: [Role],
-        jobTypeValue: JobType,
+        title: title
+        about: String
+        roles: [Role]
+        jobType: JobType
     ): JobPosting!
 
     matchToJobPosting(id: ID!): User!
@@ -263,7 +260,7 @@ type JobExperience {
 }
 
 type Education {
-    college: String!
+    school: String!
     user: User!
     graduation: Date
     degreeType: DegreeType
