@@ -32,6 +32,8 @@ async function startServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    introspection: true,
+  playground: true,
     context: ({ req }) => {
       const token = req.headers.authorization;
       const user = getUser(token);
