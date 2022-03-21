@@ -28,6 +28,7 @@ const getUser = token => {
   }
 };
 
+
 async function startServer() {
   const server = new ApolloServer({
     typeDefs,
