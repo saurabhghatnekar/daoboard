@@ -210,8 +210,24 @@ const userSchema = new mongoose.Schema(
         isFounder: {
             type: Boolean,
             // required: true
-        }
+        },
 
+        //candiate fields
+
+        applied: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'JobPosting'
+        }],
+
+        rejected: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'JobPosting'
+        }],
+
+        withdrawn: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'JobPosting'
+        }],
 
     }
 );

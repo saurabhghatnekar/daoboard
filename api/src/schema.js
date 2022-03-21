@@ -154,6 +154,13 @@ type Mutation {
     signUp(email: Email!, password: String!, firstName: String!, lastName:String!, role: String!): String!
     signIn(email: Email!, password: String!): SignInResponse!
     
+    matchToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    applyToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    rejectJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    
+    matchToJobSeeker(jobSeekerId: ID!, userId: ID!): User!
+    rejectJobSeeker(jobSeekerId: ID!, userId: ID!): User!
+    
     updateProfile(
         field: String!
         stringValue: String
@@ -194,6 +201,7 @@ type Mutation {
         gpa: Float,
         gpaMax: Float
     ): Education!
+    
     updateEducation(
         id: ID!
         field: String!
@@ -240,8 +248,7 @@ type Mutation {
     ): JobPosting!
 
     applyToJob(id: ID!): JobPosting!
-
-
+    
 }
 
 

@@ -408,4 +408,72 @@ module.exports = {
 
     return { filename, mimetype, encoding };
   },
+
+  applyToJobPosting: async (_, {jobPostingId, userId}, { models, user }) => {
+
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to apply to a job');
+    }
+    console.log(jobPostingId)
+    let jobPosting = await models.JobPosting.findById(jobPostingId);
+    console.log(jobPosting)
+    jobPosting = await models.JobPosting.findOneAndUpdate(
+      { _id: jobPostingId},
+      { $push: {applied: mongoose.Types.ObjectId(userId)} },
+      { new: true }
+    )
+    console.log(jobPosting)
+    return jobPosting
+  },
+
+  matchToJobPosting: async (_, { id }, { models, user }) => {
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to apply to a job');
+    }
+
+    const jobPosting = await models.JobPosting.findById(id);
+    if (jobPosting && !jobPosting.applied.includes(user.id)) {
+      throw new ForbiddenError(
+        "You don't have permissions to update job posting!"
+        );
+    }
+    await models.user.findOneAndUpdate(
+      { _id: user.id},
+      { $push: {appliedTo: mongoose.Types.ObjectId(id)} },
+      { new: true }
+    )
+
+    return await models.JobPosting.findOneAndUpdate(
+      { _id: id },
+      { $push: {matched: mongoose.Types.ObjectId(user.id)} },
+      { new: true }
+    )
+  },
+
+  rejectJobPosting: async (_, { id }, { models, user }) => {
+    if (!user) {
+      throw new AuthenticationError('You must be signed in to apply to a job');
+    }
+
+    const jobPosting = await models.JobPosting.findById(id);
+    if (jobPosting && !jobPosting.applied.includes(user.id)) {
+      throw new ForbiddenError(
+        "You don't have permissions to update job posting!"
+        );
+    }
+
+    await models.user.findOneAndUpdate(
+      { _id: user.id},
+      { $pull: {appliedTo: mongoose.Types.ObjectId(id)} },
+      { new: true }
+    )
+
+    return await models.JobPosting.findOneAndUpdate(
+      { _id: id },
+      { $pull: {applied: mongoose.Types.ObjectId(user.id)} },
+      { new: true }
+    )
+  },
+
+
 }

@@ -42,8 +42,8 @@ async function startServer() {
     await server.start();
   
     const app = express();
-    app.use(helmet());
-    app.use(cors());
+    // app.use(helmet());
+    // app.use(cors());
   
     // This middleware should be added before calling `applyMiddleware`.
     app.use(graphqlUploadExpress());
