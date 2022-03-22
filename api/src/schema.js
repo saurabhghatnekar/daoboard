@@ -48,7 +48,7 @@ type User {
     currentRole: Role!
     openToRoles: [Role]!
     bio: String
-
+    role: String!
     """
     Social media
     """
@@ -147,14 +147,16 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
-    signUp(
-        email: Email!
-        password: String!
-        firstName: String!
-        lastName: String!
-    ): String!
+    signUp(email: Email!, password: String!, firstName: String!, lastName:String!, role: String!): String!
     signIn(email: Email!, password: String!): SignInResponse!
-
+    
+    matchToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    applyToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    rejectJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    
+    matchToJobSeeker(jobSeekerId: ID!, userId: ID!): User!
+    rejectJobSeeker(jobSeekerId: ID!, userId: ID!): User!
+    
     updateProfile(
         firstName: String
         lastName: String
@@ -194,6 +196,7 @@ type Mutation {
         graduation: Date
         degreeType: DegreeType
     ): Education!
+    
     updateEducation(
         id: ID!
         school: String
@@ -237,10 +240,8 @@ type Mutation {
         jobType: JobType
     ): JobPosting!
 
-    matchToJobPosting(id: ID!): User!
-    matchToJobSeeker(id: ID!): User!
-
-
+    applyToJob(id: ID!): JobPosting!
+    
 }
 
 

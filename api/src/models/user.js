@@ -66,6 +66,9 @@ const userSchema = new mongoose.Schema(
             maxLength: 280
         },
 
+        role: {
+            type: String,
+        },
 
         website: {
             type: mongoose.SchemaTypes.Url
@@ -119,12 +122,31 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'
         },
+        isFounder: {
+            type: Boolean,
+            // required: true
+        },
 
+        //candiate fields
         rejectedJobSeekers: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],
 
+        applied: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'JobPosting'
+        }],
+
+        rejected: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'JobPosting'
+        }],
+
+        withdrawn: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'JobPosting'
+        }],
 
     }
 );
