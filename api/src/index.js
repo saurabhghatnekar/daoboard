@@ -34,6 +34,7 @@ async function startServer() {
     typeDefs,
     resolvers,
     introspection: true,
+    departments: true
   playground: true,
     context: ({ req }) => {
       const token = req.headers.authorization;
