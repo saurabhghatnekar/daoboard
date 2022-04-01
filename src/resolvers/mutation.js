@@ -55,18 +55,23 @@ module.exports = {
   },
 
   updateProfile: async (_, { 
-      field, 
-      stringValue,
-      stringsValue,
-      accountTypesValue,
-      roleValue,
-      rolesValue,
-      statusValue,
-      jobTypesValue,
-      experienceValue,
-      booleanValue
+      firstName,
+        lastName,
+        publicKey,
+        ens,
+        accountType,
+        currentRole,
+        openToRoles,
+        bio,
+        website,
+        linkedIn,
+        github,
+        twitter,
+        status,
+        hereTo,
+        lookingForWebThree,
     }, { models, user }) => {
-
+    // console.log(website, firstName, lastName, publicKey, ens, accountType, currentRole, openToRoles, bio, website, linkedIn, github, twitter, status, hereTo, lookingForWebThree);
     // Takes two parameters
     // `field`: select a key from `field_to_type` to update
     // Second parameter is `field_to_type[field]`
@@ -79,36 +84,87 @@ module.exports = {
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
+    const userToUpdate = await models.User.findOne({ id: mongoose.Types.ObjectId(user._id)});
 
-    field_to_type = {
-      "firstName": stringValue,
-      "lastName": stringValue,
-      "ens": stringValue,
-      "bio": stringValue,
-      "accountType": accountTypesValue,
-      "currentRole": roleValue,
-      "openToRoles": rolesValue,
-      "website": stringValue,
-      "linkedIn": stringValue,
-      "github": stringValue,
-      "twitter": stringValue,
-      "skills": stringsValue,
-      "status": statusValue,
-      "jobType": jobTypesValue,
-      "lookingForWebThree": stringValue,
-      "experience": experienceValue,
-      "isFounder": booleanValue
+    if (!userToUpdate) {
+      throw new Error('User not found');
     }
-
-    if (!(field in field_to_type)) {
-      throw new ForbiddenError('Invalid field');
+    if (firstName) {
+      userToUpdate.firstName = firstName;
     }
+    if (lastName) {
+      userToUpdate.lastName = lastName;
+    }
+    if (publicKey) {
+      userToUpdate.publicKey = publicKey;
+    }
+    if (ens) {
+      userToUpdate.ens = ens;
+    }
+    if (accountType) {
+      userToUpdate.accountType = accountType;
+    }
+    if (currentRole) {
+      userToUpdate.currentRole = currentRole;
+    }
+    if (openToRoles) {
+      userToUpdate.openToRoles = openToRoles;
+    }
+    if (bio) {
+      userToUpdate.bio = bio;
+    }
+    if (website) {
+      userToUpdate.website = website;
+    }
+    if (linkedIn) {
+      userToUpdate.linkedIn = linkedIn;
+    }
+    if (github) {
+      userToUpdate.github = github;
+    }
+    if (twitter) {
+      userToUpdate.twitter = twitter;
+    }
+    if (status) {
+      userToUpdate.status = status;
+    }
+    if (hereTo) {
+      userToUpdate.hereTo = hereTo;
+    }
+    if (lookingForWebThree) {
+      userToUpdate.lookingForWebThree = lookingForWebThree;
+    }
+    try {
+      await userToUpdate.save();
+      return userToUpdate;
+    } catch (err) {
+      console.log(err);
+      throw new Error('Error updating profile');
+    }
+    // return await models.User.findOneAndUpdate(
+    //   { _id: user._id },
+    //   {
+    //     $set: {
+    //       firstName,
+    //       lastName,
+    //       publicKey,
+    //       ens,
+    //       accountType,
+    //       currentRole,
+    //       openToRoles,
+    //       bio,
+    //       website,
+    //       linkedIn,
+    //       github,
+    //       twitter,
+    //       status,
+    //       hereTo,
+    //       lookingForWebThree
+    //     }
+    //   },
+    //   { new: true }
+    // );
 
-    return await models.User.findOneAndUpdate(
-      { _id: user.id },
-      { $set: { [field]: field_to_type[field] } },
-      { new: true }
-    )
   },
 
   updatePFP: async (_, { pfp }, { models, user }) => {

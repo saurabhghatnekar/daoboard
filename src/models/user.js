@@ -82,6 +82,7 @@ const accountTypes = [
 
 const userSchema = new mongoose.Schema(
     {
+
         email: {
             type: mongoose.SchemaTypes.Email,
             unique: true,
