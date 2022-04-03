@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const educationSchema = new mongoose.Schema(
     {
-        college: {
+        school: {
             type: String
         },
         graduation: {
