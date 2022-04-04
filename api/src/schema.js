@@ -1,7 +1,7 @@
 const { gql } = require('apollo-server-express');
 
 // Add messages
-// Figure out files (and put in updateProfile function)
+// Figure out files (and add to updateProfile function)
 
 module.exports = gql`
 scalar Upload
