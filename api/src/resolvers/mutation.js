@@ -14,7 +14,7 @@ const mongoose = require('mongoose');
 // Add logo to createCompany
 
 module.exports = {
-  signUp: async (_, { email, password, firstName, lastName, role }, { models }) => {
+  signUp: async (_, { email, password, firstName, lastName, accountType }, { models }) => {
     email = email.trim().toLowerCase();
     const user = await models.User.findOne( { email } );
     if (user) {
@@ -27,7 +27,7 @@ module.exports = {
         email,
         firstName,
         lastName,
-        role,
+        accountType,
         password: hashed
 
       });

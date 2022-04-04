@@ -147,7 +147,11 @@ type Query {
 
 type Mutation {
     singleUpload(file: Upload!): File!
-    signUp(email: Email!, password: String!, firstName: String!, lastName:String!, role: String!): String!
+    signUp(email: Email!
+           password: String!
+           firstName: String!
+           lastName: String!
+           accountType: AccountType!): String!
     signIn(email: Email!, password: String!): SignInResponse!
     
     matchToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
