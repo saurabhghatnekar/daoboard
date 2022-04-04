@@ -16,7 +16,7 @@ degreeTypes = [
 
 const educationSchema = new mongoose.Schema(
     {
-        college: {
+        school: {
             type: String,
             required: true
         },
@@ -38,8 +38,7 @@ const educationSchema = new mongoose.Schema(
         },
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true
+            ref: 'User'
         }
 
     }

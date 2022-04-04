@@ -8,7 +8,7 @@ const Mutation = require('./mutation');
 const User = require('./user');
 const JobPosting = require('./jobPosting');
 const Company = require('./company');
-
+const Education = require('./education');
 
 module.exports = {
     Query,
@@ -16,6 +16,7 @@ module.exports = {
     User,
     JobPosting,
     Company,
+    Education,
     Upload: GraphQLUpload,
     Date: GraphQLDate,
     Email: GraphQLEmailAddress

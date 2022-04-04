@@ -13,7 +13,7 @@ const mongoose = require('mongoose');
 // maxLength validator not working
 
 module.exports = {
-  signUp: async (_, { email, password, firstName, lastName, role }, { models }) => {
+  signUp: async (_, { email, password, firstName, lastName, accountType }, { models }) => {
     email = email.trim().toLowerCase();
     const user = await models.User.findOne( { email } );
     if (user) {
@@ -26,10 +26,11 @@ module.exports = {
         email,
         firstName,
         lastName,
-        role,
+        accountType,
         password: hashed
 
       });
+
       return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     } catch (err) {
       console.log(err);
@@ -38,9 +39,10 @@ module.exports = {
   },
   
   signIn: async (_, { email, password }, { models }) => {
-    
+
     email = email.trim().toLowerCase();
     const user = await models.User.findOne( { email } );
+
     if (!user) {
       throw new AuthenticationError('Email not found');
     }
@@ -50,7 +52,7 @@ module.exports = {
     }
     return {
       user: user,
-      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: '1d'})
     };
   },
 
@@ -84,8 +86,9 @@ module.exports = {
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
-    const userToUpdate = await models.User.findOne({ id: mongoose.Types.ObjectId(user._id)});
-
+    console.log("user", user);
+    const userToUpdate = await models.User.findById(user.id);
+    console.log(userToUpdate);
     if (!userToUpdate) {
       throw new Error('User not found');
     }
@@ -241,16 +244,12 @@ module.exports = {
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
-
-    return await models.Education.create({
-      college: args.college,
-      graduation: args.graduation,
-      degreeType: args.degreeType,
-      major: args.major,
-      gpa: args.gpa,
-      gpaMax: args.gpaMax,
+    const education = await models.Education.create({
+      school: args.school,
       user: mongoose.Types.ObjectId(user.id)
     })
+
+    return education
   },
 
   updateEducation: async (_, { 
@@ -478,7 +477,7 @@ module.exports = {
       { $push: {applied: mongoose.Types.ObjectId(userId)} },
       { new: true }
     )
-    console.log(jobPosting)
+
     return jobPosting
   },
 
