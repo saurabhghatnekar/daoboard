@@ -244,8 +244,14 @@ module.exports = {
     if (!user) {
       throw new AuthenticationError('You must be signed in to create a profile');
     }
+    console.log(args);
     const education = await models.Education.create({
       school: args.school,
+      graduation: args.graduation,
+      degreeType: args.degreeType,
+      major: args.major,
+      gpa: args.gpa,
+      gpaMax: args.gpaMax,
       user: mongoose.Types.ObjectId(user.id)
     })
 

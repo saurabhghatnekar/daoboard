@@ -94,8 +94,8 @@ type User {
 type Education {
     id: ID!
     school: String!
-    graduation: Date
-    degreeType: DegreeType
+    graduation: Date!
+    degreeType: DegreeType!
     user: User!
 }
 
@@ -403,8 +403,9 @@ enum JobType {
 }
 
 enum companyType {
-    DAO
-    Centralized
+    DAO 
+    CentralizedWithPlansForDAO
+    CentralizedWithoutPlansForDAO
 }
 
 `;
