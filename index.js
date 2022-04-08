@@ -36,6 +36,7 @@ async function startServer() {
     introspection: true,
     playground: true,
     context: ({ req }) => {
+
       const token = req.headers.authorization;
       const user = getUser(token);
       return { models, user };

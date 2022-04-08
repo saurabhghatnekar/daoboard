@@ -87,7 +87,7 @@ const userSchema = new mongoose.Schema(
             unique: true
         },
         pfp: {
-            type: Buffer
+            type: String
         },
         currentRole: {
             type: String,

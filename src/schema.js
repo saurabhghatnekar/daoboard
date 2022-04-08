@@ -44,7 +44,7 @@ type User {
     firstName: String!
     lastName: String!
     ens: String
-    pfp: File
+    pfp: String
     currentRole: Role!
     openToRoles: [Role]!
     bio: String
@@ -89,8 +89,10 @@ type User {
     lookingForWebThree: String!
     
     appliedTo: [JobPosting]!
+    uploads: [String]
 
 }
+
 type Education {
     id: ID!
     school: String!
