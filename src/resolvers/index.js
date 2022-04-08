@@ -9,7 +9,7 @@ const User = require('./user');
 const JobPosting = require('./jobPosting');
 const Company = require('./company');
 const Education = require('./education');
-
+const Me = require('./me');
 module.exports = {
     Query,
     Mutation,

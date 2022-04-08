@@ -4,6 +4,12 @@ const mongoose = require('mongoose');
 module.exports = {
     // General queries
     uploads: (_, __) => {},
+
+    me: async (_, __, {  models, user }) => {
+
+        return await models.User.findById(user.id);
+
+    },
     users: async (_, filter, { models }) => {
         const shouldApplyFilters = Object.keys(filter).length !== 0;
 

@@ -6,18 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "start" : "nodemon index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-
-  },
   "dependencies": {
-    "nodemon": "^2.0.15",
     "apollo-server": "^3.6.1",
     "apollo-server-express": "^3.6.1",
+    "aws-sdk": "^2.1110.0",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

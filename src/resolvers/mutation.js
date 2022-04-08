@@ -1,4 +1,5 @@
 require('dotenv').config()
+
 const { finished } = require('stream/promises');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -8,6 +9,9 @@ const {
 } = require('apollo-server-express');
 const mongoose = require('mongoose');
 
+const { extname } = require('path');
+const { v4: uuid } = require('uuid'); // (A)
+const s3 = require('./s3'); // (B)
 // Fix singleUpload!
 // Create updatePFP and updateResume logic (probably combine)
 // maxLength validator not working
@@ -454,20 +458,46 @@ module.exports = {
   },
 
 
-  singleUpload: async (_, { file }) => {
+  singleUpload: async (_, { file }, { models, user}) => {
     const { createReadStream, filename, mimetype, encoding } = await file;
 
-    // Invoking the `createReadStream` will return a Readable Stream.
-    // See https://nodejs.org/api/stream.html#stream_readable_streams
-    const stream = createReadStream();
+     const {Location} = await s3.upload({ // (C)
+        Body: createReadStream(),
+        Key: `${uuid()}${extname(filename)}`,
+        ContentType: mimetype
+      }).promise();
 
-    // This is purely for demonstration purposes and will overwrite the
-    // local-file-output.txt in the current working directory on EACH upload.
-    const out = require('fs').createWriteStream('local-file-output.txt');
-    stream.pipe(out);
-    await finished(out);
+      return {
+        filename,
+        mimetype,
+        encoding,
+        uri: Location
+      };
+  },
 
-    return { filename, mimetype, encoding };
+  uploadResume: async (_, { file }, { models, user}) => {
+    const { createReadStream, filename, mimetype, encoding } = await file;
+    // const s3FileName = `${uuid()}${extname(filename)}`;
+    // console.log("s3FileName", s3FileName);
+
+     const { Location } = await s3.upload({ // (C)
+        Body: createReadStream(),
+        Key: `${uuid()}${extname(filename)}`,
+        ContentType: mimetype
+      }).promise();
+
+      await models.User.findOneAndUpdate(
+        { _id: user.id },
+        { $set: {resume: Location} },
+        { new: true }
+      )
+
+      return {
+        filename,
+        mimetype,
+        encoding,
+        uri:Location
+      };
   },
 
   applyToJobPosting: async (_, {jobPostingId, userId}, { models, user }) => {

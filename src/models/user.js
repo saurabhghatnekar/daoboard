@@ -144,7 +144,7 @@ const userSchema = new mongoose.Schema(
 
 
         resume: {
-            type: Buffer
+            type: String
         },
 
 

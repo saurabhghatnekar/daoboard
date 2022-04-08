@@ -166,6 +166,7 @@ type Mutation {
     
     matchToJobSeeker(jobSeekerId: ID!, userId: ID!): User!
     rejectJobSeeker(jobSeekerId: ID!, userId: ID!): User!
+    uploadResume(file: Upload!): File!
     
     updateProfile(
         firstName: String
@@ -259,6 +260,7 @@ type Mutation {
 
 
 type File {
+    uri: String!
     filename: String!
     mimetype: String!
     encoding: String!
