@@ -467,7 +467,13 @@ module.exports = {
         ContentType: mimetype
       }).promise();
 
+      await models.User.findOneAndUpdate(
+      { _id: user.id },
+      { $push: {uploads: Location} },
+      { new: true })
+
       return {
+
         filename,
         mimetype,
         encoding,
@@ -485,6 +491,7 @@ module.exports = {
         Key: `${uuid()}${extname(filename)}`,
         ContentType: mimetype
       }).promise();
+
 
       await models.User.findOneAndUpdate(
         { _id: user.id },

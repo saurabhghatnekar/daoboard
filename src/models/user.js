@@ -165,6 +165,10 @@ const userSchema = new mongoose.Schema(
             maxLength: 280
         },
 
+        uploads: [{
+            type: String,
+
+        }],
 
         // Recruiter fields
 
