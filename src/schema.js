@@ -24,31 +24,31 @@ type User {
     Match info
     """
 
-    matchedTo: [User]!
-    matchedFrom: [User]!
-    matches: [User]!
-    rejectedJobs: [JobPosting]!
+    matchedTo: [User]
+    matchedFrom: [User]
+    matches: [User]
+    rejectedJobs: [JobPosting]
 
     """
     Recruiter info
     """
 
     company: Company
-    jobPostings: [JobPosting]!
-    rejectedJobSeekers: [User]!
+    jobPostings: [JobPosting]
+    rejectedJobSeekers: [User]
 
     """
     About
     """
 
-    firstName: String!
-    lastName: String!
+    firstName: String
+    lastName: String
     ens: String
     pfp: String
-    currentRole: Role!
-    openToRoles: [Role]!
+    currentRole: Role
+    openToRoles: [Role]
     bio: String
-    role: String!
+    role: String
     """
     Social media
     """
@@ -62,33 +62,33 @@ type User {
     Experience
     """
 
-    jobExperience: [JobExperience]!
+    jobExperience: [JobExperience]
 
     """
     Education
     """
 
-    education: [Education]!
+    education: [Education]
 
     """
     Status
     """
 
-    status: Status!
+    status: Status
 
     """
     Job type
     """
 
-    hereTo: [JobType!]!
+    hereTo: [JobType]
 
     """
     What are you looking for in web3
     """
 
-    lookingForWebThree: String!
-    
-    appliedTo: [JobPosting]!
+    lookingForWebThree: String
+
+    appliedTo: [JobPosting]
     uploads: [String]
 
 }
@@ -161,15 +161,15 @@ type Mutation {
     singleUpload(file: Upload!): File!
     signUp(email: Email!, password: String!, firstName: String!, lastName:String!, accountType: AccountType!): String!
     signIn(email: Email!, password: String!): SignInResponse!
-    
+
     matchToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
     applyToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
     rejectJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
-    
+
     matchToJobSeeker(jobSeekerId: ID!, userId: ID!): User!
     rejectJobSeeker(jobSeekerId: ID!, userId: ID!): User!
     uploadResume(file: Upload!): File!
-    
+
     updateProfile(
         firstName: String
         lastName: String
@@ -189,14 +189,14 @@ type Mutation {
     ): User!
 
     updatePFP(pfp: Upload!): User!
-    
+
     createJobExperience(
         company: String!
         title: String!
         startDate: Date!
         endDate: Date!
     ): JobExperience!
-    
+
     updateJobExperience(
         id: ID!
         company: String
@@ -210,7 +210,7 @@ type Mutation {
         graduation: Date
         degreeType: DegreeType
     ): Education!
-    
+
     updateEducation(
         id: ID!
         school: String
@@ -228,7 +228,7 @@ type Mutation {
         markets: [String]!
         elevatorPitch: String!
     ): Company!
-    
+
     updateCompany(
         id: ID!
         name: String!
@@ -257,7 +257,7 @@ type Mutation {
 
     applyToJob(id: ID!): JobPosting!
     updateResume(id: ID!, resume: Upload!): User!
-    
+
 }
 
 
@@ -294,7 +294,7 @@ enum Role {
         """
         Engineering
         """
-    
+
         MobileDeveloper
         FrontendDeveloper
         BackendDeveloper
@@ -303,24 +303,24 @@ enum Role {
         SmartContractEngineer
         BlockchainEngineer
         HardwareEngineer
-    
+
         """
         Art and Design
         """
-    
+
         UIUXDesigner
         Artist
 
         """
         Product
         """
-  
+
         ProductManager
-    
+
         """
         Operations
         """
-    
+
         Finance
         HR
         CustomerService
@@ -328,22 +328,22 @@ enum Role {
         """
         Sales
         """
- 
+
         Sales
-    
+
         """
         Marketing
         """
-  
+
         Marketing
         GrowthHacker
         ContentCreator
         SocialMediaManager
-            
+
         """
         Management
         """
-  
+
         Management
 
         """
@@ -357,15 +357,15 @@ enum Role {
         """
 
         InvestmentAnalyst
-    
+
         """
         Other
         """
 
         ProjectManager
         Attorney
-        
-    
+
+
 }
 
 enum DegreeType {
@@ -407,7 +407,7 @@ enum JobType {
 }
 
 enum companyType {
-    DAO 
+    DAO
     CentralizedWithPlansForDAO
     CentralizedWithoutPlansForDAO
 }
