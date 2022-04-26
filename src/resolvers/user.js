@@ -14,4 +14,7 @@ module.exports = {
     company: async (user, __, { models }) => {
         return await models.Company.findOne( { _id: user.company });
     },
+    matches: async (user, __, { models }) => {
+        return [];
+    },
 }
