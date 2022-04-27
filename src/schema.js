@@ -162,12 +162,12 @@ type Mutation {
     signUp(email: Email!, password: String!, firstName: String!, lastName:String!, accountType: AccountType!): String!
     signIn(email: Email!, password: String!): SignInResponse!
 
-    matchToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
-    applyToJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    matchToJobPosting(jobPostingId: ID!): JobPosting!
+    applyToJobPosting(jobPostingId: ID!): JobPosting!
     rejectJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
 
-    matchToJobSeeker(jobSeekerId: ID!, userId: ID!): User!
-    rejectJobSeeker(jobSeekerId: ID!, userId: ID!): User!
+    matchToJobSeeker(jobSeekerId: ID!): User!
+    rejectJobSeeker(jobSeekerId: ID!): User!
     uploadResume(file: Upload!): File!
 
     updateProfile(
@@ -400,10 +400,10 @@ enum Status {
 }
 
 enum JobType {
-    FindFullTime
-    FindPartTime
-    StartSomethingNew
-    MakeFriendsAndHaveFun
+    FullTime 
+    PartTime 
+    Intern
+    Cofounder
 }
 
 enum companyType {

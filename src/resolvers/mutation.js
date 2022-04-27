@@ -8,7 +8,7 @@ const {
     ForbiddenError
 } = require('apollo-server-express');
 const mongoose = require('mongoose');
-const { Buffer } = require('buffer');
+const {Buffer} = require('buffer');
 
 const {extname} = require('path');
 const {v4: uuid} = require('uuid'); // (A)
@@ -171,7 +171,7 @@ module.exports = {
             throw new AuthenticationError('You must be signed in to create a profile');
         }
         const Location = await uploadFile(pfp);
-         const {createReadStream, filename, mimetype, encoding} = await pfp;
+        const {createReadStream, filename, mimetype, encoding} = await pfp;
         const stream = createReadStream();
 
         const userToUpdate = await models.User.findById(user.id);
@@ -529,28 +529,30 @@ module.exports = {
         return jobPosting
     },
 
-    matchToJobPosting: async (_, {id}, {models, user}) => {
+    applyToJobPosting: async (_, {jobPostingId}, {models, user}) => {
         if (!user) {
             throw new AuthenticationError('You must be signed in to apply to a job');
         }
-
-        const jobPosting = await models.JobPosting.findById(id);
-        if (jobPosting && !jobPosting.applied.includes(user.id)) {
+        console.log("applyToJobPosting- id", jobPostingId)
+        const jobPosting = await models.JobPosting.findById(jobPostingId);
+        console.log("applyToJobPosting- jobPosting", jobPosting)
+        console.log("jobPosting.applied.includes(user.id)", jobPosting.applied.includes(user.id))
+        if (jobPosting && jobPosting.applied.includes(user.id)) {
             throw new ForbiddenError(
-                "You don't have permissions to update job posting!"
+                "You have already applied to this job posting"
             );
         }
-        await models.user.findOneAndUpdate(
+        await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$push: {appliedTo: mongoose.Types.ObjectId(id)}},
+            {$addToSet: {appliedTo: mongoose.Types.ObjectId(jobPostingId), recruitersOfApplied: jobPosting.hiringContact}},
             {new: true}
         )
 
         return await models.JobPosting.findOneAndUpdate(
-            {_id: id},
-            {$push: {matched: mongoose.Types.ObjectId(user.id)}},
+            {_id: jobPostingId},
+            {$push: {applied: mongoose.Types.ObjectId(user.id)}},
             {new: true}
-        )
+        );
     },
 
     rejectJobPosting: async (_, {id}, {models, user}) => {
@@ -576,6 +578,32 @@ module.exports = {
             {$pull: {applied: mongoose.Types.ObjectId(user.id)}},
             {new: true}
         )
+    },
+
+    matchToJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to apply to a job');
+        }
+
+        return await models.User.findOneAndUpdate(
+            {_id: user.id},
+            {$push: {shortlistedCandidates: mongoose.Types.ObjectId(jobSeekerId)}},
+            {new: true}
+        )
+
+    },
+
+    rejectJobSeeker: async (_, {id}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to reject a job');
+        }
+
+        return await models.user.findOneAndUpdate(
+            {_id: user.id},
+            {$pull: {rejectedCandidates: mongoose.Types.ObjectId(id)}},
+            {new: true}
+        )
+
     },
 
 

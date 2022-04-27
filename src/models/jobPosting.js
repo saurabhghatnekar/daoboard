@@ -4,6 +4,11 @@ require('mongoose-type-url');
 
 
 const roles = [
+    "MobileDeveloper",
+    "FrontendDeveloper",
+    "FullStackDeveloper",
+    "SoftwareDeveloper",
+    "BackendDeveloper",
     "SoftwareEngineer",
     "MobileDeveloper",
     "AndroidDeveloper",
@@ -104,14 +109,14 @@ const jobPostingSchema = new mongoose.Schema(
         }],
         hiringContact: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Recruiter'
+            ref: 'User'
         }],
         applied: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],
 
-        
+
     }
 );
 

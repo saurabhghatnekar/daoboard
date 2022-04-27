@@ -185,11 +185,27 @@ const userSchema = new mongoose.Schema(
             // required: true
         },
 
+        shortlistedCandidates: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }],
+
+        rejectedCandidates: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }],
+
+
         //candiate fields
 
         applied: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'JobPosting'
+        }],
+
+        recruitersOfApplied:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
         }],
 
         rejected: [{
@@ -201,6 +217,8 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'JobPosting'
         }],
+
+
 
     }
 );
