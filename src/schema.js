@@ -118,7 +118,7 @@ type Company {
 
 type JobPosting {
     id: ID!
-    company: Company!
+    company: Company
     title: String!
     about: String!
     roles: [Role!]!
