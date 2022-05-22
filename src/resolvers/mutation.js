@@ -544,7 +544,12 @@ module.exports = {
         }
         await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$addToSet: {appliedTo: mongoose.Types.ObjectId(jobPostingId), recruitersOfApplied: jobPosting.hiringContact}},
+            {
+                $addToSet: {
+                    appliedTo: mongoose.Types.ObjectId(jobPostingId),
+                    recruitersOfApplied: jobPosting.hiringContact
+                }
+            },
             {new: true}
         )
 
@@ -555,26 +560,29 @@ module.exports = {
         );
     },
 
-    rejectJobPosting: async (_, {id}, {models, user}) => {
+    rejectJobPosting: async (_, {jobPostingId}, {models, user}) => {
         if (!user) {
             throw new AuthenticationError('You must be signed in to apply to a job');
         }
 
-        const jobPosting = await models.JobPosting.findById(id);
+        const jobPosting = await models.JobPosting.findById(jobPostingId);
         if (jobPosting && !jobPosting.applied.includes(user.id)) {
             throw new ForbiddenError(
                 "You don't have permissions to update job posting!"
             );
         }
 
-        await models.user.findOneAndUpdate(
+        await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$pull: {appliedTo: mongoose.Types.ObjectId(id)}},
+            {
+                $pull: {appliedTo: mongoose.Types.ObjectId(jobPostingId)},
+                $push: {rejected: mongoose.Types.ObjectId(jobPostingId)}
+            },
             {new: true}
         )
 
         return await models.JobPosting.findOneAndUpdate(
-            {_id: id},
+            {_id: jobPostingId},
             {$pull: {applied: mongoose.Types.ObjectId(user.id)}},
             {new: true}
         )

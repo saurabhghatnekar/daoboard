@@ -5,29 +5,29 @@ require('mongoose-type-url');
 
 const roles = [
     "MobileDeveloper",
-"FrontendDeveloper",
-"BackendDeveloper",
-"FullStackDeveloper",
-"SoftwareDeveloper",
-"SmartContractEngineer",
-"BlockchainEngineer",
-"HardwareEngineer",
-"UIUXDesigner",
-"Artist",
-"ProductManager",
-"Finance",
-"HR",
-"CustomerService",
-"Sales",
-"Marketing",
-"GrowthHacker",
-"ContentCreator",
-"SocialMediaManager",
-"Management",
-"CommunityManager",
-"InvestmentAnalyst",
-"ProjectManager",
-"Attorney"
+    "FrontendDeveloper",
+    "BackendDeveloper",
+    "FullStackDeveloper",
+    "SoftwareDeveloper",
+    "SmartContractEngineer",
+    "BlockchainEngineer",
+    "HardwareEngineer",
+    "UIUXDesigner",
+    "Artist",
+    "ProductManager",
+    "Finance",
+    "HR",
+    "CustomerService",
+    "Sales",
+    "Marketing",
+    "GrowthHacker",
+    "ContentCreator",
+    "SocialMediaManager",
+    "Management",
+    "CommunityManager",
+    "InvestmentAnalyst",
+    "ProjectManager",
+    "Attorney"
 
 ]
 
@@ -78,14 +78,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             // required: true
         },
-        ens: {
-            type: String,
-            unique: true
-        },
-        publicKey: {
-            type: String,
-            unique: true
-        },
+
         pfp: {
             type: String
         },
@@ -203,7 +196,7 @@ const userSchema = new mongoose.Schema(
             ref: 'JobPosting'
         }],
 
-        recruitersOfApplied:[{
+        recruitersOfApplied: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],
@@ -217,7 +210,6 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'JobPosting'
         }],
-
 
 
     }

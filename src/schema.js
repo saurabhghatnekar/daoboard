@@ -43,7 +43,6 @@ type User {
 
     firstName: String
     lastName: String
-    ens: String
     pfp: String
     currentRole: Role
     openToRoles: [Role]
@@ -164,7 +163,7 @@ type Mutation {
 
     matchToJobPosting(jobPostingId: ID!): JobPosting!
     applyToJobPosting(jobPostingId: ID!): JobPosting!
-    rejectJobPosting(jobPostingId: ID!, userId: ID!): JobPosting!
+    rejectJobPosting(jobPostingId: ID!): JobPosting!
 
     matchToJobSeeker(jobSeekerId: ID!): User!
     rejectJobSeeker(jobSeekerId: ID!): User!
