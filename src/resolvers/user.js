@@ -30,6 +30,15 @@ module.exports = {
              // console.log("recruitersOfApplied", new Set(recruitersOfApplied.map(r=>r._id.toString())));
 
         }
+
+        else {
+            const candidates =  await models.User.find({recruitersOfApplied: { $in: [ user._id ] } });
+            const candidateIds = candidates.map(candidate => candidate._id.toString());
+            const shortlistedCandidates = currentUser.shortlistedCandidates;
+            const shortlistedCandidateIds = shortlistedCandidates.map(candidate => candidate._id.toString());
+            filteredArray = candidateIds.filter(value => shortlistedCandidateIds.includes(value))
+            filteredArray = Array.from(new Set(filteredArray));
+        }
             return await models.User.find({ '_id': { $in: filteredArray } });
     },
 }
