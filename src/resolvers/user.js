@@ -25,10 +25,8 @@ module.exports = {
             const recruitersOfAppliedIds = recruitersOfApplied.map(recruiter => recruiter.toString());
             filteredArray = recruitersIds.filter(value => recruitersOfAppliedIds.includes(value));
             filteredArray = Array.from(new Set(filteredArray));
-
              // console.log("recruiters", new Set(recruiters.map(r=>r._id.toString())));
              // console.log("recruitersOfApplied", new Set(recruitersOfApplied.map(r=>r._id.toString())));
-
         }
 
         else {

@@ -124,7 +124,7 @@ type JobPosting {
     jobType: JobType!
     recruiter: User!
     applied: [User!]!
-    hiringContact: User!
+    
 }
 
 type SignInResponse {

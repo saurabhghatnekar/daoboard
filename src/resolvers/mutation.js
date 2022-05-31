@@ -194,7 +194,7 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to create a profile');
         }
-        return // Update this
+        // Update this
     },
 
 
@@ -413,42 +413,29 @@ module.exports = {
 
     updateJobPosting: async (_, {
         id,
-        field,
-        stringValue,
-        stringsValue,
-        experienceValue,
-        rolesValue,
-        jobTypeValue
+        title,
+        about,
+        role,
+        jobType
     }, {models, user}) => {
 
         if (!user) {
             throw new AuthenticationError('You must be signed in to create a profile');
         }
-
         const jobPosting = await models.JobPosting.findById(id);
-        if (jobPosting && String(jobPosting.hiringContact) !== user.id) {
+        if (String(jobPosting.hiringContact) !== user.id) {
+
             throw new ForbiddenError(
                 "You don't have permissions to update job posting!"
             );
         }
 
-        field_to_type = {
-            "about": stringValue,
-            "experienceRequired": experienceValue,
-            "roles": rolesValue,
-            "jobType": jobTypeValue,
-            "skillsRequired": stringsValue,
-        }
-
-        if (!(field in field_to_type)) {
-            throw new ForbiddenError('Invalid field');
-        }
-
         return await models.JobPosting.findOneAndUpdate(
             {_id: id},
-            {$set: {[field]: field_to_type[field]}},
+            {$set: {title, about, role, jobType}},
             {new: true}
         )
+
     },
 
     applyToJob: async (_, {id}, {models, user}) => {
