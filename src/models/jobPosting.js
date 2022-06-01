@@ -82,6 +82,11 @@ const experience = [
 
 const jobPostingSchema = new mongoose.Schema(
     {
+        title: {
+            type: String,
+            maxLength: 4000,
+            required: true
+        },
         company: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'

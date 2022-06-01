@@ -403,6 +403,7 @@ module.exports = {
         return await models.JobPosting.create({
             company: _user.company,
             about: args.about,
+            title:args.title,
             experienceRequired: args.experienceRequired,
             roles: args.roles,
             jobType: args.jobType,
