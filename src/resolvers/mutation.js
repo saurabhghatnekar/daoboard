@@ -403,7 +403,7 @@ module.exports = {
         return await models.JobPosting.create({
             company: _user.company,
             about: args.about,
-            title:args.title,
+            title: args.title,
             experienceRequired: args.experienceRequired,
             roles: args.roles,
             jobType: args.jobType,
@@ -589,14 +589,15 @@ module.exports = {
 
     },
 
-    rejectJobSeeker: async (_, {id}, {models, user}) => {
+    rejectJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a job');
         }
+        
 
-        return await models.user.findOneAndUpdate(
+        return await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$pull: {rejectedCandidates: mongoose.Types.ObjectId(id)}},
+            {$push: {rejectedCandidates: mongoose.Types.ObjectId(jobSeekerId)}},
             {new: true}
         )
 
