@@ -1,16 +1,17 @@
-const { argsToArgsConfig } = require("graphql/type/definition");
+const {argsToArgsConfig} = require("graphql/type/definition");
 const mongoose = require('mongoose');
 
 module.exports = {
     // General queries
-    uploads: (_, __) => {},
+    uploads: (_, __) => {
+    },
 
-    me: async (_, __, {  models, user }) => {
+    me: async (_, __, {models, user}) => {
 
         return await models.User.findById(user.id);
 
     },
-    users: async (_, filter, { models }) => {
+    users: async (_, filter, {models}) => {
         const shouldApplyFilters = Object.keys(filter).length !== 0;
 
         if (!shouldApplyFilters) {
@@ -26,81 +27,99 @@ module.exports = {
 
         if (shouldApplyExperienceFilter) {
             users = users.find(
-                { experience: { $in: filter.experience } }
+                {experience: {$in: filter.experience}}
             )
         }
 
         if (shouldApplyCurrentRolesFilter) {
             users = users.find(
-                { currentRole: { $in: filter.currentRoles } }
+                {currentRole: {$in: filter.currentRoles}}
             )
         }
 
         if (shouldApplyOpenToRolesFilter) {
             users = users.find(
-                { openToRoles: { $elemMatch: { $in: filter.openToRoles } } }
+                {openToRoles: {$elemMatch: {$in: filter.openToRoles}}}
             )
         }
 
         if (shouldApplyJobTypesFilter) {
             users = users.find(
-                { jobType: { $elemMatch: { $in: filter.jobTypes } } }
+                {jobType: {$elemMatch: {$in: filter.jobTypes}}}
             )
         }
 
         return await users;
     },
-    companies: async (_, __, { models }) => {
+    companies: async (_, __, {models}) => {
         return await models.Company.find();
     },
-    jobPostings: async (_, filter, { models }) => {
+
+    jobPostings: async (_, filter, {models, user}) => {
         const shouldApplyFilters = Object.keys(filter).length !== 0;
-        
+        const userData = await models.User.findById(user.id);
+        const idsToExclude = userData.appliedTo.concat(userData.rejected);
+
         if (!shouldApplyFilters) {
-            return await models.JobPosting.find();
+
+            return await models.JobPosting.find({_id: {$nin: idsToExclude}});
         }
 
+        // console.log("userData", userData);
         const shouldApplyCompanyNameFilter = filter.companyName != null;
         const shouldApplyCompanyTypeFilter = filter.companyType != null;
         const shouldApplyRolesFilter = filter.roles;
         const shouldApplyJobTypesFilter = filter.jobTypes;
-        
+
         var jobPostings = models.JobPosting;
         var company;
 
         if (shouldApplyCompanyNameFilter) {
             company = await models.Company.findOne({
-                name: filter.companyName
+                name: filter.companyName,
+
             });
             jobPostings = jobPostings.find(
-                { company }
+                {
+                    company,
+                    _id: {$nin: idsToExclude}
+                }
             )
         }
 
         if (shouldApplyCompanyTypeFilter) {
             company = await models.Company.find({
-                type: filter.companyType
+                type: filter.companyType,
+
             });
             jobPostings = jobPostings.find(
-                { company }
+                {
+                    company,
+
+                    _id: {$nin: idsToExclude}
+                }
             )
         }
 
         if (shouldApplyRolesFilter) {
             jobPostings = jobPostings.find(
-                { roles: { $elemMatch: { $in: filter.roles } } }
+
+                {roles: {$elemMatch: {$in: filter.roles}},
+                _id: {$nin: idsToExclude}}
             )
         }
 
         if (shouldApplyJobTypesFilter) {
             jobPostings = jobPostings.find(
-                { jobTypes: { $in: filter.jobTypes } }
+                {jobTypes: {$in: filter.jobTypes},
+                _id: {$nin: idsToExclude}
+                }
             )
         }
 
         return await jobPostings;
 
     },
-    
+
 
 };
