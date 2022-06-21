@@ -10,7 +10,7 @@ module.exports = {
         return await models.JobPosting.find({applied: user._id});
     },
     jobPostings: async (user, __, {models}) => {
-       
+
         const userData = await models.User.findById(user.id);
         const idsToExclude = userData.appliedTo.concat(userData.rejected);
          return await models.JobPosting.find({_id: {$nin: idsToExclude}});

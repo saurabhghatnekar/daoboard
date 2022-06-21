@@ -554,11 +554,11 @@ module.exports = {
         }
 
         const jobPosting = await models.JobPosting.findById(jobPostingId);
-        if (jobPosting && !jobPosting.applied.includes(user.id)) {
-            throw new ForbiddenError(
-                "You don't have permissions to update job posting!"
-            );
-        }
+        // if (jobPosting && !jobPosting.applied.includes(user.id)) {
+        //     throw new ForbiddenError(
+        //         "You don't have permissions to update job posting!"
+        //     );
+        // }
 
         await models.User.findOneAndUpdate(
             {_id: user.id},
