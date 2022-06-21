@@ -6,7 +6,8 @@ const { graphqlUploadExpress } = require('graphql-upload');
 const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
 const cors = require('cors');
-
+const morganBody = require('morgan-body');
+const bodyParser = require('body-parser');
 const typeDefs = require('./src/schema');
 const resolvers = require('./src/resolvers');
 const db = require('./src/db');
@@ -48,10 +49,14 @@ async function startServer() {
     const app = express();
     // app.use(helmet());
     // app.use(cors());
-
+    app.use(bodyParser.json());
     // This middleware should be added before calling `applyMiddleware`.
     app.use(graphqlUploadExpress());
-
+    app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+    })
+    // morganBody(app);
     server.applyMiddleware({ app });
 
     await new Promise(r => app.listen({ port }, r));
@@ -60,6 +65,5 @@ async function startServer() {
   }
 
   startServer();
-
 
 

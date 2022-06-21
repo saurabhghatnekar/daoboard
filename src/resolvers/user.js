@@ -6,10 +6,14 @@ module.exports = {
         return await models.Education.find({user: user._id})
     },
     appliedTo: async (user, __, {models}) => {
+
         return await models.JobPosting.find({applied: user._id});
     },
     jobPostings: async (user, __, {models}) => {
-        return await models.JobPosting.find({hiringContact: user._id});
+       
+        const userData = await models.User.findById(user.id);
+        const idsToExclude = userData.appliedTo.concat(userData.rejected);
+         return await models.JobPosting.find({_id: {$nin: idsToExclude}});
     },
     company: async (user, __, {models}) => {
         return await models.Company.findOne({_id: user.company});
