@@ -11,11 +11,15 @@ module.exports = {
         return await models.User.findById(user.id);
 
     },
-    users: async (_, filter, {models}) => {
+    users: async (_, filter, {models, user}) => {
+
+        const userData = await models.User.findById(user.id);
+        const idsToExclude = userData.shortlistedCandidates.concat(userData.rejectedCandidates);
+        
         const shouldApplyFilters = Object.keys(filter).length !== 0;
 
         if (!shouldApplyFilters) {
-            return await models.User.find();
+            return await models.User.find({_id: {$nin: idsToExclude}});
         }
 
         const shouldApplyExperienceFilter = filter.experience;
@@ -27,13 +31,13 @@ module.exports = {
 
         if (shouldApplyExperienceFilter) {
             users = users.find(
-                {experience: {$in: filter.experience}}
+                {experience: {$in: filter.experience, _id: {$nin: idsToExclude}}}
             )
         }
 
         if (shouldApplyCurrentRolesFilter) {
             users = users.find(
-                {currentRole: {$in: filter.currentRoles}}
+                {currentRole: {$in: filter.currentRoles, _id: {$nin: idsToExclude}}}
             )
         }
 
@@ -45,7 +49,7 @@ module.exports = {
 
         if (shouldApplyJobTypesFilter) {
             users = users.find(
-                {jobType: {$elemMatch: {$in: filter.jobTypes}}}
+                {jobType: {$elemMatch: {$in: filter.jobTypes}}, _id: {$nin: idsToExclude}}
             )
         }
 

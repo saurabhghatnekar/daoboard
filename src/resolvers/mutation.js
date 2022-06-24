@@ -578,7 +578,7 @@ module.exports = {
 
     matchToJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
         if (!user) {
-            throw new AuthenticationError('You must be signed in to apply to a job');
+            throw new AuthenticationError('You must be signed in to match to a jobseeker');
         }
 
         return await models.User.findOneAndUpdate(
