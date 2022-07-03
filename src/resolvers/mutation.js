@@ -274,11 +274,9 @@ module.exports = {
 
     updateEducation: async (_, {
                                 id,
-                                field,
-                                stringValue,
-                                floatValue,
-                                degreeTypeValue,
-                                dateValue
+                                school,
+                                graduation,
+                                degreeType,
                             },
                             {models, user}) => {
 
@@ -287,30 +285,25 @@ module.exports = {
         }
 
         const education = await models.Education.findById(id);
+
         if (education && String(education.user) !== user.id) {
             throw new ForbiddenError(
                 "You don't have permissions to update education!"
             );
         }
 
-        field_to_type = {
-            "college": stringValue,
-            "major": stringValue,
-            "graduation": dateValue,
-            "degreeType": degreeTypeValue,
-            "gpa": floatValue,
-            "gpaMax": floatValue
+        if (school !== undefined){
+            education.school = school;
         }
-
-        if (!(field in field_to_type)) {
-            throw new ForbiddenError('Invalid field');
+        if (graduation !== undefined){
+            education.graduation = graduation;
         }
+        if (degreeType !== undefined){
+            education.degreeType = degreeType;
+        }
+        await education.save();
 
-        return await models.Education.findOneAndUpdate(
-            {_id: id},
-            {$set: {[field]: field_to_type[field]}},
-            {new: true}
-        )
+        return education;
     },
 
     createCompany: async (_, args, {models, user}) => {

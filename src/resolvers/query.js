@@ -15,7 +15,7 @@ module.exports = {
 
         const userData = await models.User.findById(user.id);
         const idsToExclude = userData.shortlistedCandidates.concat(userData.rejectedCandidates);
-        
+
         const shouldApplyFilters = Object.keys(filter).length !== 0;
 
         if (!shouldApplyFilters) {

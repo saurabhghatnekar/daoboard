@@ -276,12 +276,6 @@ type JobExperience {
     user: User!
 }
 
-type Education {
-    school: String!
-    user: User!
-    graduation: Date
-    degreeType: DegreeType
-}
 
 enum AccountType {
     JobSeeker
