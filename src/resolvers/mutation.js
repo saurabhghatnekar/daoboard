@@ -216,10 +216,10 @@ module.exports = {
 
     updateJobExperience: async (_, {
         id,
-        field,
-        stringValue,
-        dateValue,
-        jobExperienceTypeValue
+        company,
+        title,
+        startDate,
+        endDate
     }, {models, user}) => {
 
         if (!user) {
@@ -233,24 +233,23 @@ module.exports = {
             );
         }
 
-        field_to_type = {
-            "company": stringValue,
-            "title": stringValue,
-            "description": stringValue,
-            "startDate": dateValue,
-            "endDate": dateValue,
-            "positionType": jobExperienceTypeValue
+        if (!jobExperience) {
+            throw new Error('Job experience not found');
         }
-
-        if (!(field in field_to_type)) {
-            throw new ForbiddenError('Invalid field');
+        if (company !== undefined) {
+            jobExperience.company = company;
         }
-
-        return await models.JobExperience.findOneAndUpdate(
-            {_id: id},
-            {$set: {[field]: field_to_type[field]}},
-            {new: true}
-        )
+        if (title !== undefined) {
+            jobExperience.title = title;
+        }
+        if (startDate !== undefined) {
+            jobExperience.startDate = startDate;
+        }
+        if (endDate !== undefined) {
+            jobExperience.endDate = endDate;
+        }
+        await jobExperience.save();
+        return jobExperience;
     },
 
 
@@ -547,10 +546,10 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to apply to a job');
         }
-        console.log("applyToJobPosting- id", jobPostingId)
+        // console.log("applyToJobPosting- id", jobPostingId)
         const jobPosting = await models.JobPosting.findById(jobPostingId);
-        console.log("applyToJobPosting- jobPosting", jobPosting)
-        console.log("jobPosting.applied.includes(user.id)", jobPosting.applied.includes(user.id))
+        // console.log("applyToJobPosting- jobPosting", jobPosting)
+        // console.log("jobPosting.applied.includes(user.id)", jobPosting.applied.includes(user.id))
         if (jobPosting && jobPosting.applied.includes(user.id)) {
             throw new ForbiddenError(
                 "You have already applied to this job posting"

@@ -199,7 +199,7 @@ type Mutation {
     updateJobExperience(
         id: ID!
         company: String
-        title: String!
+        title: String
         startDate: Date
         endDate: Date
     ): JobExperience!
@@ -274,7 +274,7 @@ type JobExperience {
     title: String!
     startDate: Date
     endDate: Date
-    user: User!
+    
 }
 
 
