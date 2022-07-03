@@ -125,5 +125,9 @@ module.exports = {
 
     },
 
+    jobPosting: async (_, {id}, {models, user}) => {
+        return await models.JobPosting.findById(id);
+    }
+
 
 };
