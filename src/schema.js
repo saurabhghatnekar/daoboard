@@ -103,16 +103,16 @@ type Education {
 type Company {
     id: ID!
     name: String!
-    logo: File
+    logo: String
     type: companyType!
     website: String
     linkedIn: String
     github: String
     twitter: String
-    markets: [Market]!
-    elevatorPitch: String!
-    recruiters: [User!]!
-    jobsPostings: [JobPosting]!
+    markets: [Market]
+    elevatorPitch: String
+    recruiters: [User!]
+    jobsPostings: [JobPosting]
 }
 
 type JobPosting {
@@ -227,17 +227,18 @@ type Mutation {
         markets: [String]!
         elevatorPitch: String!
     ): Company!
-
+    
+    updateCompanyLogo(id: ID!, logo: Upload!): Company
     updateCompany(
         id: ID!
-        name: String!
-        type: companyType!
+        name: String
+        type: companyType
         website: String
         linkedIn: String
         github: String
         twitter: String
-        markets: [String]!
-        elevatorPitch: String!
+        markets: [Market]
+        elevatorPitch: String
     ): Company!
 
     createJobPosting(

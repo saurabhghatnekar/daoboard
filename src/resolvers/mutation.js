@@ -292,13 +292,13 @@ module.exports = {
             );
         }
 
-        if (school !== undefined){
+        if (school !== undefined) {
             education.school = school;
         }
-        if (graduation !== undefined){
+        if (graduation !== undefined) {
             education.graduation = graduation;
         }
-        if (degreeType !== undefined){
+        if (degreeType !== undefined) {
             education.degreeType = degreeType;
         }
         await education.save();
@@ -339,12 +339,39 @@ module.exports = {
         return company;
     },
 
+    updateCompanyLogo: async (_, {logo}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to create a profile');
+        }
+        const company = await models.Company.findById(user.company);
+        if (!company) {
+            throw new Error('Company not found');
+        }
+        const Location = await uploadFile(logo);
+        const {createReadStream, filename, mimetype, encoding} = await logo;
+        const stream = createReadStream();
+
+        company.logo = Location
+
+        try {
+            await company.save();
+            return company;
+        } catch (err) {
+            console.log(err);
+            throw new Error('Error updating profile');
+        }
+    },
+
     updateCompany: async (_, {
         id,
-        field,
-        stringValue,
-        stringsValue,
-        companyTypeValue
+        name,
+        type,
+        website,
+        linkedIn,
+        github,
+        twitter,
+        markets,
+        elevatorPitch
     }, {models, user}) => {
 
         if (!user) {
@@ -358,27 +385,33 @@ module.exports = {
             );
         }
 
-        field_to_type = {
-            "name": stringValue,
-            "type": companyTypeValue,
-            "website": stringValue,
-            "linkedIn": stringValue,
-            "github": stringValue,
-            "twitter": stringValue,
-            "markets": stringsValue,
-            "elevatorPitch": stringValue,
-            "whyYourCompany": stringValue
+        if (name !== undefined) {
+            company.name = name;
         }
-
-        if (!(field in field_to_type)) {
-            throw new ForbiddenError('Invalid field');
+        if (type !== undefined) {
+            company.type = type;
         }
+        if (website !== undefined) {
+            company.website = website;
+        }
+        if (linkedIn !== undefined) {
+            company.linkedIn = linkedIn;
+        }
+        if (github !== undefined) {
+            company.github = github;
+        }
+        if (twitter !== undefined) {
+            company.twitter = twitter;
+        }
+        if (markets !== undefined) {
+            company.markets = markets;
+        }
+        if (elevatorPitch !== undefined) {
+            company.elevatorPitch = elevatorPitch;
+        }
+        await company.save();
 
-        return await models.Company.findOneAndUpdate(
-            {_id: id},
-            {$set: {[field]: field_to_type[field]}},
-            {new: true}
-        )
+        return company;
     },
 
 
@@ -586,7 +619,7 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a job');
         }
-        
+
 
         return await models.User.findOneAndUpdate(
             {_id: user.id},
