@@ -15,14 +15,6 @@ const companySchema = new mongoose.Schema(
         logo: {
             type: Buffer
         },
-        type: {
-            type: String,
-            enum: [
-                'DAO', 
-                'CentralizedWithPlansForDAO', 
-                'CentralizedWithoutPlansForDAO'
-            ]
-        },
         whyYourCompany: {
             type: String,
             maxLength: 2000

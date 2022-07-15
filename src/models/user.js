@@ -149,11 +149,11 @@ const userSchema = new mongoose.Schema(
 
         jobType: [{
             type: String,
-            enum: ['FullTime', 'PartTime', 'Intern', 'Cofounder']
+            enum: ['FullTime', 'PartTime', 'Intern', 'Cofounder', 'CXO']
         }],
 
 
-        lookingForWebThree: {
+        lookingFor: {
             type: String,
             maxLength: 280
         },
