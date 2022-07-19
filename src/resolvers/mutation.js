@@ -10,12 +10,18 @@ const {
 const mongoose = require('mongoose');
 const {Buffer} = require('buffer');
 
+const StreamChat = require('stream-chat').StreamChat;
+
 const {extname} = require('path');
 const {v4: uuid} = require('uuid'); // (A)
 const s3 = require('./s3'); // (B)
 // Fix singleUpload!
 // Create updatePFP and updateResume logic (probably combine)
 // maxLength validator not working
+
+
+const chatServerClient = StreamChat.getInstance('njfg29ktgtqd', 'chsrjq6h6qar93py8j47k5swc6ey35k5e58npng88azxahffehukumw45r9g6ys9');
+
 
 const uploadFile = async (file) => {
     const {createReadStream, filename, mimetype, encoding} = await file;
@@ -48,7 +54,8 @@ module.exports = {
                 password: hashed
 
             });
-
+            const chatServerResp = await chatServerClient.upsertUsers([{id: user.id, firstName: firstName, lastName: lastName}]);
+            console.log("chatServerResp", chatServerResp);
             return jwt.sign({id: user._id}, process.env.JWT_SECRET);
         } catch (err) {
             console.log(err);
@@ -72,6 +79,14 @@ module.exports = {
             user: user,
             token: jwt.sign({id: user._id}, process.env.JWT_SECRET)
         };
+    },
+    generateChatToken: async (_, __, {models, user}) => {
+        console.log("user", user);
+        const userFound = await models.User.findById(user.id);
+        if (!userFound) {
+            throw new ForbiddenError('User not found');
+        }
+        return chatServerClient.createToken(user.id);
     },
 
     updateProfile: async (_, {
