@@ -85,7 +85,7 @@ module.exports = gql`
         What are you looking for in web3
         """
 
-        lookingForWebThree: String
+        lookingFor: String
 
         appliedTo: [JobPosting]
         uploads: [String]
@@ -180,7 +180,7 @@ module.exports = gql`
             twitter: String
             status: Status
             hereTo: [JobType]
-            lookingForWebThree: String
+            lookingFor: String
         ): User!
 
         updatePFP(pfp: Upload!): User!
@@ -283,7 +283,7 @@ module.exports = gql`
         Design
         Investing
         Operations
-        Sales and Marketing
+        SalesAndMarketing
     }
 
     enum DegreeType {
@@ -295,14 +295,14 @@ module.exports = gql`
     }
 
     enum Market {
-        B2B_Software
-        B2C_Software
+        B2BSoftware
+        B2CSoftware
         Hardware
-        Data_ML_AI
+        DataMLAI
         eCommerce
         Investing
-        Networked Platforms
-        Consumer Goods
+        NetworkedPlatforms
+        ConsumerGoods
     }
 
     enum jobExperienceType {

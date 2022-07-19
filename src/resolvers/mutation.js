@@ -104,9 +104,9 @@ module.exports = {
         twitter,
         status,
         hereTo,
-        lookingForWebThree,
+        lookingFor,
     }, {models, user}) => {
-        // console.log(website, firstName, lastName, publicKey, ens, accountType, currentRole, openToRoles, bio, website, linkedIn, github, twitter, status, hereTo, lookingForWebThree);
+
         // Takes two parameters
         // `field`: select a key from `field_to_type` to update
         // Second parameter is `field_to_type[field]`
@@ -167,8 +167,8 @@ module.exports = {
         if (hereTo) {
             userToUpdate.hereTo = hereTo;
         }
-        if (lookingForWebThree) {
-            userToUpdate.lookingForWebThree = lookingForWebThree;
+        if (lookingFor) {
+            userToUpdate.lookingFor = lookingFor;
         }
         try {
             await userToUpdate.save();
