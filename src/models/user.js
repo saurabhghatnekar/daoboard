@@ -4,30 +4,12 @@ require('mongoose-type-url');
 
 
 const roles = [
-    "MobileDeveloper",
-    "FrontendDeveloper",
-    "BackendDeveloper",
-    "FullStackDeveloper",
-    "SoftwareDeveloper",
-    "SmartContractEngineer",
-    "BlockchainEngineer",
-    "HardwareEngineer",
-    "UIUXDesigner",
-    "Artist",
-    "ProductManager",
-    "Finance",
-    "HR",
-    "CustomerService",
-    "Sales",
-    "Marketing",
-    "GrowthHacker",
-    "ContentCreator",
-    "SocialMediaManager",
-    "Management",
-    "CommunityManager",
-    "InvestmentAnalyst",
-    "ProjectManager",
-    "Attorney"
+        "Engineering",
+        "Product",
+        "Design",
+        "Investing",
+        "Operations",
+        "SalesAndMarketing"
 
 ]
 
