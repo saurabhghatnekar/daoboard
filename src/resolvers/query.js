@@ -65,8 +65,11 @@ module.exports = {
         const idsToExclude = userData.appliedTo.concat(userData.rejected);
 
         if (!shouldApplyFilters) {
+            const openToRoles = userData.openToRoles;
+            const interestedInRoles = await models.JobPosting.find({_id: {$nin: idsToExclude}, roles: {$elemMatch: {$in: openToRoles}}});
+            const notInterestedInRoles = await models.JobPosting.find({_id: {$nin: idsToExclude}, roles: {$not:{$elemMatch: {$in: openToRoles}}}});
+            return interestedInRoles.concat(notInterestedInRoles);
 
-            return await models.JobPosting.find({_id: {$nin: idsToExclude}});
         }
 
         // console.log("userData", userData);
