@@ -37,7 +37,7 @@ const uploadFile = async (file) => {
 
 
 module.exports = {
-    signUp: async (_, {email, password, firstName, lastName, accountType}, {models}) => {
+    signUp: async (_, {email, password, firstName, lastName, accountType, companyId}, {models}) => {
         email = email.trim().toLowerCase();
         const user = await models.User.findOne({email});
         if (user) {
@@ -51,10 +51,15 @@ module.exports = {
                 firstName,
                 lastName,
                 accountType,
-                password: hashed
+                password: hashed,
+                companyId: mongoose.Types.ObjectId(companyId)
 
             });
-            const chatServerResp = await chatServerClient.upsertUsers([{id: user.id, firstName: firstName, lastName: lastName}]);
+            const chatServerResp = await chatServerClient.upsertUsers([{
+                id: user.id,
+                firstName: firstName,
+                lastName: lastName
+            }]);
             console.log("chatServerResp", chatServerResp);
             return jwt.sign({id: user._id}, process.env.JWT_SECRET);
         } catch (err) {
@@ -629,11 +634,29 @@ module.exports = {
 
     },
 
+    shortlistJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to match to a jobseeker');
+        }
+        const recruiter = await models.User.findById(user.id);
+
+        await models.Company.findOneAndUpdate(
+            {_id: recruiter.companyId},
+            {$push: {shortlistedJobSeekersList: mongoose.Types.ObjectId(jobSeekerId)}},
+            {new: true}
+        )
+
+        return await models.User.findOneAndUpdate(
+            {_id: user.id},
+            {$push: {shortlistedJobSeekers: mongoose.Types.ObjectId(jobSeekerId)}},
+            {new: true}
+        )
+
+    },
     rejectJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a job');
         }
-
 
         return await models.User.findOneAndUpdate(
             {_id: user.id},
@@ -643,5 +666,32 @@ module.exports = {
 
     },
 
+    shortlistCompany: async (_, {companyId}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to match to a company');
+        }
+        const company = await models.Company.findById(companyId);
+        await models.User.findOneAndUpdate(
+            {_id: user.id},
+            {$addToSet: {shortlistedCompanies: mongoose.Types.ObjectId(companyId)}},
+            {new: true}
+        )
+
+        return company
+
+
+    },
+    rejectCompany: async (_, {companyId}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to reject a company');
+        }
+
+        return await models.User.findOneAndUpdate(
+            {_id: user.id},
+            {$push: {rejectedCompanies: mongoose.Types.ObjectId(companyId)}},
+            {new: true}
+        )
+
+    }
 
 }

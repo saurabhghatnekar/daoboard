@@ -46,6 +46,23 @@ const companySchema = new mongoose.Schema(
         twitter: {
             type: mongoose.SchemaTypes.Url
         },
+        rolesOffered: [],
+
+        shortlistedJobSeekersList: [{
+            type: mongoose.Schema.Types.ObjectId,
+            default: []
+        }],
+
+        shortlistedJobSeekers: [{
+            jobSeeker: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            recruiter: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        }],
 
     }
 );

@@ -17,9 +17,7 @@ module.exports = gql`
         id: ID!
         email: Email!
         password: String!
-        publicKey: String
         accountType: [AccountType]
-
         """
         Match info
         """
@@ -112,6 +110,7 @@ module.exports = gql`
         elevatorPitch: String
         recruiters: [User!]
         jobsPostings: [JobPosting]
+        rolesOffered: [Role]
     }
 
     type JobPosting {
@@ -151,6 +150,11 @@ module.exports = gql`
         User queries
         """
         me: User!
+        getCompanies: [Company]!
+        getJobSeekers: [User]!
+        getMatchedJobSeekers: [User]!
+        getMatchedCompanies: [Company]!
+
 
     }
 
@@ -164,7 +168,7 @@ module.exports = gql`
         rejectJobPosting(jobPostingId: ID!): JobPosting!
 
         matchToJobSeeker(jobSeekerId: ID!): User!
-        rejectJobSeeker(jobSeekerId: ID!): User!
+        
         uploadResume(file: Upload!): File!
 
         updateProfile(
@@ -221,9 +225,13 @@ module.exports = gql`
             twitter: String
             markets: [Market]!
             elevatorPitch: String!
+            allowedRecruiters: [Email]
+            allowedEmployees: [Email]
+            allowedEmailDomains: [String]
         ): Company!
 
         updateCompanyLogo(id: ID!, logo: Upload!): Company
+
         updateCompany(
             id: ID!
             name: String
@@ -252,6 +260,12 @@ module.exports = gql`
         applyToJob(id: ID!): JobPosting!
         updateResume(id: ID!, resume: Upload!): User!
 
+        shortlistCompany(companyId: ID!): Company!
+        rejectCompany(companyId: ID!): Company!
+
+        shortlistJobSeeker(jobSeekerId: ID!): User!
+        rejectJobSeeker(jobSeekerId: ID!): User!
+
     }
 
 
@@ -274,7 +288,11 @@ module.exports = gql`
 
     enum AccountType {
         JobSeeker
-        Recruiter
+        CompanyAdmin
+        CompanyRecruiter
+        CompanyUser
+        Recruiter @deprecated(reason: "Use CompanyRecruiter instead")
+
     }
 
     enum Role {
