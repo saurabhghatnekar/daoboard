@@ -27,7 +27,10 @@ const experience = [
 
 const accountTypes = [
     "JobSeeker",
-    "Recruiter"
+    "Recruiter",
+    "CompanyAdmin",
+    "CompanyRecruiter",
+    "CompanyUser"
 ]
 
 const userSchema = new mongoose.Schema(
@@ -46,6 +49,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: accountTypes
         }],
+        companyId: {
+            type: mongoose.Schema.Types.ObjectId,
+        },
+
         appliedTo: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'JobPosting'
@@ -164,6 +171,10 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],
+        shortlistedJobSeekers: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }],
 
         rejectedCandidates: [{
             type: mongoose.Schema.Types.ObjectId,
@@ -192,6 +203,15 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'JobPosting'
         }],
+
+        // jobSeeker fields (new)
+        shortlistedCompanies: [{
+            type: mongoose.Schema.Types.ObjectId,
+        }],
+        rejectedCompanies: [{
+            type: mongoose.Schema.Types.ObjectId,
+        }],
+
 
 
     }
