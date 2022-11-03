@@ -52,6 +52,9 @@ const userSchema = new mongoose.Schema(
         companyId: {
             type: mongoose.Schema.Types.ObjectId,
         },
+        company: {
+            type: mongoose.Schema.Types.ObjectId,
+        },
 
         appliedTo: [{
             type: mongoose.Schema.Types.ObjectId,
@@ -176,7 +179,7 @@ const userSchema = new mongoose.Schema(
             ref: 'User'
         }],
 
-        rejectedCandidates: [{
+        rejectedJobSeekers: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],

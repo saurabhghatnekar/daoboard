@@ -219,6 +219,7 @@ module.exports = {
 
 
     createJobExperience: async (_, args, {models, user}) => {
+
         if (!user) {
             throw new AuthenticationError('You must be signed in to create a profile');
         }
@@ -330,7 +331,7 @@ module.exports = {
         // Add founders
         // Add job postings
         const _user = await models.User.findById(user.id)
-        if (!user || !_user.accountType.includes('Recruiter')) {
+        if (!user || !_user.accountType in ['Recruiter', 'CompanyAdmin']) {
             throw new AuthenticationError(
                 'You must be signed in as a recruiter to create a company profile'
             );
@@ -352,26 +353,42 @@ module.exports = {
 
         await models.User.findOneAndUpdate(
             {_id: user.id},
-            {company: mongoose.Types.ObjectId(company)}
+            {companyId: mongoose.Types.ObjectId(company)}
         );
 
         return company;
     },
 
-    updateCompanyLogo: async (_, {logo}, {models, user}) => {
+    updateCompanyLogo: async (_, {companyId, logo}, {models, user}) => {
         if (!user) {
             throw new AuthenticationError('You must be signed in to create a profile');
         }
-        const company = await models.Company.findById(user.company);
+        const currentUser = await models.User.findById(user.id);
+        const company = await models.Company.findById(companyId);
+        console.log(currentUser)
+        console.log(company);
         if (!company) {
             throw new Error('Company not found');
         }
-        const Location = await uploadFile(logo);
-        const {createReadStream, filename, mimetype, encoding} = await logo;
-        const stream = createReadStream();
+        if (!currentUser.accountType.includes("CompanyAdmin")  || currentUser.companyId.toString() !== company["_id"].toString()) {
+            throw new ForbiddenError(
+                "You don't have permissions to update company logo!"
+            );
+        }
+        try {
 
-        company.logo = Location
 
+            // console.log(logo);
+            const Location = await uploadFile(logo);
+            // const {createReadStream, filename, mimetype, encoding} = await logo;
+            // const stream = createReadStream();
+            console.log(Location);
+
+            company.logo = Location
+        } catch (err) {
+            console.log(err);
+            throw new Error('Error updating company logo');
+        }
         try {
             await company.save();
             return company;
@@ -438,15 +455,17 @@ module.exports = {
         // Add logo
         // Add founders
         // Add job postings
+
         const _user = await models.User.findById(user.id)
-        if (!user || !_user.accountType.includes('Recruiter')) {
+        if (!user || !_user.accountType.includes('CompanyAdmin')) {
             throw new AuthenticationError(
                 'You must be signed in as a recruiter to create a job posting'
             );
         }
-
+        console.log(_user)
         return await models.JobPosting.create({
-            company: _user.company,
+            company: _user.companyId,
+            companyId: _user.companyId,
             about: args.about,
             title: args.title,
             experienceRequired: args.experienceRequired,
@@ -657,10 +676,10 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a job');
         }
-
+        console.log("rejectJobSeeker- id", jobSeekerId)
         return await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$push: {rejectedCandidates: mongoose.Types.ObjectId(jobSeekerId)}},
+            {$addToSet: {rejectedJobSeeker: mongoose.Types.ObjectId(jobSeekerId)}},
             {new: true}
         )
 
@@ -670,10 +689,13 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to match to a company');
         }
+        console.log("shortlistCompany- id", companyId)
         const company = await models.Company.findById(companyId);
         await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$addToSet: {shortlistedCompanies: mongoose.Types.ObjectId(companyId)}},
+            {$addToSet: {shortlistedCompanies: mongoose.Types.ObjectId(companyId)},
+                $pull: {rejectedCompanies: mongoose.Types.ObjectId(companyId)}
+            },
             {new: true}
         )
 
@@ -685,13 +707,15 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a company');
         }
-
+        console.log("rejectCompany- id", companyId)
         return await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$push: {rejectedCompanies: mongoose.Types.ObjectId(companyId)}},
+            {   $addToSet: {rejectedCompanies: mongoose.Types.ObjectId(companyId)},
+                $pull: {shortlistedCompanies: mongoose.Types.ObjectId(companyId)}
+            },
+
             {new: true}
         )
-
     }
 
 }

@@ -44,11 +44,11 @@ module.exports = {
 
         else {
             const shortlistedJobSeekers = currentUser.shortlistedJobSeekers;
-            console.log("shortlistedJobSeekers", shortlistedJobSeekers);
+
             const candidates =  await models.User.find({
                 _id: {$in: shortlistedJobSeekers},
                 shortlistedCompanies: { $in: [ user.companyId ] }},{ _id: 1 });
-            console.log("candidates", candidates);
+
             // const shortlistedCandidates = currentUser.shortlistedCandidates;
             // const shortlistedCandidateIds = shortlistedCandidates.map(candidate => candidate._id.toString());
             filteredArray = candidates.map(candidate => candidate._id.toString())

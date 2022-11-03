@@ -172,7 +172,7 @@ module.exports = {
         const userData = await models.User.findById(user.id);
         const company = await models.Company.findById(userData.companyId);
         console.log("company", company.shortlistedJobSeekersList);
-        const idsToExclude = userData.shortlistedCandidates.concat(userData.rejectedCandidates).concat(company.shortlistedJobSeekersList)
+        const idsToExclude = userData.shortlistedJobSeekers.concat(userData.rejectedJobSeekers).concat(company.shortlistedJobSeekersList)
 
 
         const shouldApplyFilters = Object.keys(filter).length !== 0;

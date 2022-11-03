@@ -230,7 +230,7 @@ module.exports = gql`
             allowedEmailDomains: [String]
         ): Company!
 
-        updateCompanyLogo(id: ID!, logo: Upload!): Company
+        updateCompanyLogo(companyId: ID!, logo: Upload!): Company
 
         updateCompany(
             id: ID!
