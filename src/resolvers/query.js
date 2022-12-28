@@ -14,8 +14,10 @@ module.exports = {
     users: async (_, filter, {models, user}) => {
 
         const userData = await models.User.findById(user.id);
-        const idsToExclude = userData.shortlistedCandidates.concat(userData.rejectedCandidates);
+        // console.log("userData", userData.firstName);
 
+        const idsToExclude = userData.shortlistedCandidates.concat(userData.rejectedCandidates);
+        // console.log("idsToExclude", idsToExclude);
         const shouldApplyFilters = Object.keys(filter).length !== 0;
 
         if (!shouldApplyFilters) {
@@ -59,94 +61,97 @@ module.exports = {
         return await models.Company.find();
     },
 
-    jobPostings: async (_, filter, {models, user}) => {
-        const shouldApplyFilters = Object.keys(filter).length !== 0;
-        const userData = await models.User.findById(user.id);
-        const idsToExclude = userData.appliedTo.concat(userData.rejected);
 
-        if (!shouldApplyFilters) {
-            const openToRoles = userData.openToRoles;
-            const interestedInRoles = await models.JobPosting.find({
-                _id: {$nin: idsToExclude},
-                roles: {$elemMatch: {$in: openToRoles}}
-            });
-            const notInterestedInRoles = await models.JobPosting.find({
-                _id: {$nin: idsToExclude},
-                roles: {$not: {$elemMatch: {$in: openToRoles}}}
-            });
-            return interestedInRoles.concat(notInterestedInRoles);
-
-        }
-
-        // console.log("userData", userData);
-        const shouldApplyCompanyNameFilter = filter.companyName != null;
-        const shouldApplyCompanyTypeFilter = filter.companyType != null;
-        const shouldApplyRolesFilter = filter.roles;
-        const shouldApplyJobTypesFilter = filter.jobTypes;
-
-        var jobPostings = models.JobPosting;
-        var company;
-
-        if (shouldApplyCompanyNameFilter) {
-            company = await models.Company.findOne({
-                name: filter.companyName,
-
-            });
-            jobPostings = jobPostings.find(
-                {
-                    company,
-                    _id: {$nin: idsToExclude}
-                }
-            )
-        }
-
-        if (shouldApplyCompanyTypeFilter) {
-            company = await models.Company.find({
-                type: filter.companyType,
-
-            });
-            jobPostings = jobPostings.find(
-                {
-                    company,
-
-                    _id: {$nin: idsToExclude}
-                }
-            )
-        }
-
-        if (shouldApplyRolesFilter) {
-            jobPostings = jobPostings.find(
-                {
-                    roles: {$elemMatch: {$in: filter.roles}},
-                    _id: {$nin: idsToExclude}
-                }
-            )
-        }
-
-        if (shouldApplyJobTypesFilter) {
-            jobPostings = jobPostings.find(
-                {
-                    jobTypes: {$in: filter.jobTypes},
-                    _id: {$nin: idsToExclude}
-                }
-            )
-        }
-
-        return await jobPostings;
-
-    },
+    // jobPostings: async (_, filter, {models, user}) => {
+    //     const shouldApplyFilters = Object.keys(filter).length !== 0;
+    //     const userData = await models.User.findById(user.id);
+    //     const idsToExclude = userData.appliedTo.concat(userData.rejected);
+    //
+    //     if (!shouldApplyFilters) {
+    //         const openToRoles = userData.openToRoles;
+    //         const interestedInRoles = await models.JobPosting.find({
+    //             _id: {$nin: idsToExclude},
+    //             roles: {$elemMatch: {$in: openToRoles}}
+    //         });
+    //         const notInterestedInRoles = await models.JobPosting.find({
+    //             _id: {$nin: idsToExclude},
+    //             roles: {$not: {$elemMatch: {$in: openToRoles}}}
+    //         });
+    //         return interestedInRoles.concat(notInterestedInRoles);
+    //
+    //     }
+    //
+    //     // console.log("userData", userData);
+    //     const shouldApplyCompanyNameFilter = filter.companyName != null;
+    //     const shouldApplyCompanyTypeFilter = filter.companyType != null;
+    //     const shouldApplyRolesFilter = filter.roles;
+    //     const shouldApplyJobTypesFilter = filter.jobTypes;
+    //
+    //     var jobPostings = models.JobPosting;
+    //     var company;
+    //
+    //     if (shouldApplyCompanyNameFilter) {
+    //         company = await models.Company.findOne({
+    //             name: filter.companyName,
+    //
+    //         });
+    //         jobPostings = jobPostings.find(
+    //             {
+    //                 company,
+    //                 _id: {$nin: idsToExclude}
+    //             }
+    //         )
+    //     }
+    //
+    //     if (shouldApplyCompanyTypeFilter) {
+    //         company = await models.Company.find({
+    //             type: filter.companyType,
+    //
+    //         });
+    //         jobPostings = jobPostings.find(
+    //             {
+    //                 company,
+    //
+    //                 _id: {$nin: idsToExclude}
+    //             }
+    //         )
+    //     }
+    //
+    //     if (shouldApplyRolesFilter) {
+    //         jobPostings = jobPostings.find(
+    //             {
+    //                 roles: {$elemMatch: {$in: filter.roles}},
+    //                 _id: {$nin: idsToExclude}
+    //             }
+    //         )
+    //     }
+    //
+    //     if (shouldApplyJobTypesFilter) {
+    //         jobPostings = jobPostings.find(
+    //             {
+    //                 jobTypes: {$in: filter.jobTypes},
+    //                 _id: {$nin: idsToExclude}
+    //             }
+    //         )
+    //     }
+    //
+    //     return await jobPostings;
+    //
+    // },
 
     jobPosting: async (_, {id}, {models, user}) => {
         return await models.JobPosting.findById(id);
     },
 
-    getCompanies: async (_, filter, {models, user}) => {
-
+    jobPostings: async (_, filter, {models, user}) => {
+        console.log("jobPostings");
         const shouldApplyFilters = Object.keys(filter).length !== 0;
         const userData = await models.User.findById(user.id);
+        // console.log("userData", userData.shortlistedCompanies);
         const idsToExclude = userData.shortlistedCompanies.concat(userData.rejectedCompanies);
-
+        console.log("idsToExclude", idsToExclude);
         if (!shouldApplyFilters) {
+            console.log(await models.Company.find({_id: {$nin: idsToExclude}}))
             return await models.Company.find({_id: {$nin: idsToExclude}});
         }
 

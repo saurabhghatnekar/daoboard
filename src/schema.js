@@ -7,7 +7,18 @@ module.exports = gql`
     scalar Upload
     scalar Date
     scalar Email
-
+    type ChatToken {
+        user: User
+        token: String
+        company: Company
+    }
+    
+    type Match {
+        isMatch: Boolean
+        user: User
+        company: Company
+    }
+    
     type User {
 
         """
@@ -142,7 +153,7 @@ module.exports = gql`
             markets: [Market]
             roles: [Role]
             jobTypes: [JobType]
-        ): [JobPosting]!
+        ): [Company]!
         jobPosting(id: ID!): JobPosting!
         company(id: ID!): Company!
 
@@ -162,7 +173,7 @@ module.exports = gql`
         singleUpload(file: Upload!): File!
         signUp(email: Email!, password: String!, firstName: String!, lastName:String!, accountType: AccountType!): String!
         signIn(email: Email!, password: String!): SignInResponse!
-        generateChatToken: String
+        generateChatToken: ChatToken
         matchToJobPosting(jobPostingId: ID!): JobPosting!
         applyToJobPosting(jobPostingId: ID!): JobPosting!
         rejectJobPosting(jobPostingId: ID!): JobPosting!
@@ -260,10 +271,10 @@ module.exports = gql`
         applyToJob(id: ID!): JobPosting!
         updateResume(id: ID!, resume: Upload!): User!
 
-        shortlistCompany(companyId: ID!): Company!
+        shortlistCompany(companyId: ID!): Match
         rejectCompany(companyId: ID!): Company!
 
-        shortlistJobSeeker(jobSeekerId: ID!): User!
+        shortlistJobSeeker(jobSeekerId: ID!): Match
         rejectJobSeeker(jobSeekerId: ID!): User!
 
     }

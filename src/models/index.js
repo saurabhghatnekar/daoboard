@@ -4,7 +4,7 @@ const Education = require('./education');
 const File = require('./file');
 const Company = require('./company');
 const JobPosting = require('./jobPosting');
-
+const Match = require('./match');
 
 module.exports = {
     User,
@@ -12,5 +12,6 @@ module.exports = {
     Education,
     File,
     Company,
-    JobPosting
+    JobPosting,
+    // Match
 }

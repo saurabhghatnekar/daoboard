@@ -91,7 +91,11 @@ module.exports = {
         if (!userFound) {
             throw new ForbiddenError('User not found');
         }
-        return chatServerClient.createToken(user.id);
+        return {
+            user: userFound,
+            token: chatServerClient.createToken(user.id)
+
+        };
     },
 
     updateProfile: async (_, {
@@ -370,7 +374,7 @@ module.exports = {
         if (!company) {
             throw new Error('Company not found');
         }
-        if (!currentUser.accountType.includes("CompanyAdmin")  || currentUser.companyId.toString() !== company["_id"].toString()) {
+        if (!currentUser.accountType.includes("CompanyAdmin") || currentUser.companyId.toString() !== company["_id"].toString()) {
             throw new ForbiddenError(
                 "You don't have permissions to update company logo!"
             );
@@ -455,7 +459,7 @@ module.exports = {
         // Add logo
         // Add founders
         // Add job postings
-
+        console.log(args);
         const _user = await models.User.findById(user.id)
         if (!user || !_user.accountType.includes('CompanyAdmin')) {
             throw new AuthenticationError(
@@ -463,7 +467,7 @@ module.exports = {
             );
         }
         console.log(_user)
-        return await models.JobPosting.create({
+        const jobPosting = await models.JobPosting.create({
             company: _user.companyId,
             companyId: _user.companyId,
             about: args.about,
@@ -474,6 +478,12 @@ module.exports = {
             skillsRequired: args.skillsRequired,
             hiringContact: mongoose.Types.ObjectId(user.id),
         })
+        await models.Company.findOneAndUpdate(
+            {_id: _user.companyId},
+            {$push: {jobPostings: mongoose.Types.ObjectId(jobPosting)}}
+        );
+        return jobPosting
+
     },
 
     updateJobPosting: async (_, {
@@ -641,6 +651,7 @@ module.exports = {
     },
 
     matchToJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
+
         if (!user) {
             throw new AuthenticationError('You must be signed in to match to a jobseeker');
         }
@@ -654,24 +665,46 @@ module.exports = {
     },
 
     shortlistJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
+        console.log("shortlistJobSeeker- jobSeekerId", jobSeekerId)
         if (!user) {
             throw new AuthenticationError('You must be signed in to match to a jobseeker');
         }
         const recruiter = await models.User.findById(user.id);
-
+        console.log("jobSeekerId", jobSeekerId)
         await models.Company.findOneAndUpdate(
             {_id: recruiter.companyId},
             {$push: {shortlistedJobSeekersList: mongoose.Types.ObjectId(jobSeekerId)}},
             {new: true}
         )
 
-        return await models.User.findOneAndUpdate(
-            {_id: user.id},
-            {$push: {shortlistedJobSeekers: mongoose.Types.ObjectId(jobSeekerId)}},
+
+        const updatedUser = await models.User.findOneAndUpdate(
+            {_id: recruiter.id},
+            {
+                $push: {
+                    shortlistedJobSeekers: mongoose.Types.ObjectId(jobSeekerId),
+                    shortlistedCandidates: mongoose.Types.ObjectId(jobSeekerId)
+                }
+            },
+
             {new: true}
         )
-
+        let match = await models.User.findOne({_id: jobSeekerId, shortlistedCompanies: {$in: [recruiter.companyId]}})
+        let isMatch = false;
+        console.log("match", match)
+        if (match) {
+            isMatch = true;
+            // await models.Match.create({
+            //     jobSeekerId: jobSeekerId,
+            //     companyId: recruiter.companyId,
+            // })
+        }
+        return {
+            user: updatedUser,
+            isMatch: isMatch
+        }
     },
+
     rejectJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a job');
@@ -693,13 +726,29 @@ module.exports = {
         const company = await models.Company.findById(companyId);
         await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$addToSet: {shortlistedCompanies: mongoose.Types.ObjectId(companyId)},
-                $pull: {rejectedCompanies: mongoose.Types.ObjectId(companyId)}
+            {
+                $addToSet: {shortlistedCompanies: mongoose.Types.ObjectId(companyId)},
+                // $pull: {rejectedCompanies: mongoose.Types.ObjectId(companyId)}
             },
             {new: true}
         )
+        let match = await models.Company.findOne({_id: companyId, shortlistedJobSeekersList: {$in: [user.id]}})
+        let isMatch = false;
+        // console.log("match", match)
+        if (match) {
+            isMatch = true;
+            // await models.Match.create({
+            //     jobSeekerId: user.id,
+            //     companyId: companyId,
+            // })
+        }
+        return {
+            company: company,
+            isMatch: isMatch
+        }
 
-        return company
+
+        // return company
 
 
     },
@@ -710,7 +759,8 @@ module.exports = {
         console.log("rejectCompany- id", companyId)
         return await models.User.findOneAndUpdate(
             {_id: user.id},
-            {   $addToSet: {rejectedCompanies: mongoose.Types.ObjectId(companyId)},
+            {
+                $addToSet: {rejectedCompanies: mongoose.Types.ObjectId(companyId)},
                 $pull: {shortlistedCompanies: mongoose.Types.ObjectId(companyId)}
             },
 
