@@ -85,15 +85,32 @@ module.exports = {
             token: jwt.sign({id: user._id}, process.env.JWT_SECRET)
         };
     },
-    generateChatToken: async (_, __, {models, user}) => {
-        console.log("user", user);
+    generateChatToken: async (_, {chatWithId}, {models, user}) => {
+        console.log("generateChatToken user", user);
         const userFound = await models.User.findById(user.id);
         if (!userFound) {
             throw new ForbiddenError('User not found');
         }
+        const chatWithUser = await models.User.findById(chatWithId);
+        if (!chatWithUser) {
+            throw new ForbiddenError('User not found');
+        }
+
+        const token = chatServerClient.createToken(user.id);
+        console.log("generateChatToken token", token);
+        let chatId = ""
+        console.log("accountType", userFound.accountType);
+        if (userFound.accountType[0] === "JobSeeker"){
+            chatId = `${user.id}-${chatWithId}`;
+        }
+        else {
+            chatId = `${chatWithId}-${user.id}`;
+        }
         return {
+            chatId: chatId,
+            chatName: chatWithUser.firstName + " " + chatWithUser.lastName,
             user: userFound,
-            token: chatServerClient.createToken(user.id)
+            token: token
 
         };
     },

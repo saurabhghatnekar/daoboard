@@ -8,6 +8,8 @@ module.exports = gql`
     scalar Date
     scalar Email
     type ChatToken {
+        chatId: String!
+        chatName: String!
         user: User
         token: String
         company: Company
@@ -173,7 +175,7 @@ module.exports = gql`
         singleUpload(file: Upload!): File!
         signUp(email: Email!, password: String!, firstName: String!, lastName:String!, accountType: AccountType!): String!
         signIn(email: Email!, password: String!): SignInResponse!
-        generateChatToken: ChatToken
+        generateChatToken(chatWithId: ID!): ChatToken
         matchToJobPosting(jobPostingId: ID!): JobPosting!
         applyToJobPosting(jobPostingId: ID!): JobPosting!
         rejectJobPosting(jobPostingId: ID!): JobPosting!
