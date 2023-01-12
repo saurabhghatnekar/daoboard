@@ -11,7 +11,7 @@ module.exports = gql`
         chatId: String!
         chatName: String!
         user: User
-        token: String
+        token: String!  
         company: Company
     }
     
