@@ -21,10 +21,13 @@ db.connect(DB_HOST);
 const getUser = token => {
     if (token) {
         try {
+            console.log("token", token);
             return jwt.verify(token, process.env.JWT_SECRET);
         } catch (err) {
             console.log(err);
-            throw new Error('Session invalid');
+            return {}
+            //throw new Error('Session invalid');
+
         }
     }
 };
