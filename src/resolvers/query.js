@@ -144,12 +144,12 @@ module.exports = {
     },
 
     jobPostings: async (_, filter, {models, user}) => {
-        console.log("jobPostings");
+        console.log("jobPostings", user);
         const shouldApplyFilters = Object.keys(filter).length !== 0;
         const userData = await models.User.findById(user.id);
         // console.log("userData", userData.shortlistedCompanies);
         const idsToExclude = userData.shortlistedCompanies.concat(userData.rejectedCompanies);
-        console.log("idsToExclude", idsToExclude);
+        // console.log("idsToExclude", idsToExclude);
         if (!shouldApplyFilters) {
             console.log(await models.Company.find({_id: {$nin: idsToExclude}}))
             return await models.Company.find({_id: {$nin: idsToExclude}});
@@ -176,7 +176,7 @@ module.exports = {
 
         const userData = await models.User.findById(user.id);
         const company = await models.Company.findById(userData.companyId);
-        console.log("company", company.shortlistedJobSeekersList);
+        // console.log("company", company.shortlistedJobSeekersList);
         const idsToExclude = userData.shortlistedJobSeekers.concat(userData.rejectedJobSeekers).concat(company.shortlistedJobSeekersList)
 
 

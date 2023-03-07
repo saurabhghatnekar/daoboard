@@ -66,6 +66,8 @@ const jobPostingSchema = new mongoose.Schema(
         }],
 
 
+    }, {
+        timestamps: true
     }
 );
 

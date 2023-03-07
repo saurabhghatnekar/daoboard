@@ -64,6 +64,8 @@ const companySchema = new mongoose.Schema(
             }
         }],
 
+    }, {
+        timestamps: true
     }
 );
 

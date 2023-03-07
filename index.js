@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const {ApolloServer} = require('apollo-server-express');
+
 const {graphqlUploadExpress} = require('graphql-upload');
 const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
@@ -12,17 +13,31 @@ const typeDefs = require('./src/schema');
 const resolvers = require('./src/resolvers');
 const db = require('./src/db');
 const models = require('./src/models');
-
+const {FirebaseAdmin} = require('./src/helpers/firebase/firebase.helper');
+// console.log("firebaseApp", firebaseApp);
 const port = process.env.PORT;
 const DB_HOST = process.env.DB_HOST;
 db.connect(DB_HOST);
 
-
-const getUser = token => {
+const getUser = async token => {
     if (token) {
         try {
-            console.log("token", token);
-            return jwt.verify(token, process.env.JWT_SECRET);
+            return FirebaseAdmin.auth().verifyIdToken(token)
+                .then(async function (decodedToken) {
+                        const uid = decodedToken.uid;
+                        if (!uid) {
+                            return {}
+                        }
+                        const user = await models.User.findOne({uid})
+                        if (!user) {
+                            return uid
+                        }
+
+                        return user.id;
+                    }
+                );
+
+            //return jwt.verify(token, process.env.JWT_SECRET);
         } catch (err) {
             console.log(err);
             return {}
@@ -39,10 +54,10 @@ async function startServer() {
         resolvers,
         introspection: true,
         playground: true,
-        context: ({req}) => {
-
+        context: async ({req}) => {
             const token = req.headers.authorization;
-            const user = getUser(token);
+            const userId = await getUser(token);
+            let user = {id: userId}
             return {models, user};
         }
     });

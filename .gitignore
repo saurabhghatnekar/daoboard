@@ -4,3 +4,5 @@ node_modules/
 .idea/
 
 .DS_Store
+
+src/helpers/firebase/molerat-16ec2-firebase-adminsdk-p5ysn-3b329a6916.json

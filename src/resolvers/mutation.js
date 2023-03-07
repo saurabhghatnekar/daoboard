@@ -14,7 +14,24 @@ const StreamChat = require('stream-chat').StreamChat;
 
 const {extname} = require('path');
 const {v4: uuid} = require('uuid'); // (A)
-const s3 = require('./s3'); // (B)
+const s3 = require('./s3');
+const {FirebaseAdmin} = require("../helpers/firebase/firebase.helper"); // (B)
+
+
+// const firebaseConfig = {
+//
+//     apiKey: process.env.FIREBASE_API_KEY,
+//     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+//     projectId: process.env.FIREBASE_PROJECT_ID,
+//     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+//     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+//     appId: process.env.FIREBASE_APP_ID,
+//     measurementId: process.env.FIREBASE_MEASUREMENT_ID
+// }
+
+// const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+
 // Fix singleUpload!
 // Create updatePFP and updateResume logic (probably combine)
 // maxLength validator not working
@@ -37,13 +54,13 @@ const uploadFile = async (file) => {
 
 
 module.exports = {
-    signUp: async (_, {email, password, firstName, lastName, accountType, companyId}, {models}) => {
+    signUp: async (_, {email, password, firstName, lastName, accountType, companyId, uid, pfp}, {models}) => {
+        console.log("signUp", email, password, firstName, lastName, accountType, companyId, uid, pfp)
         email = email.trim().toLowerCase();
         const user = await models.User.findOne({email});
         if (user) {
             throw new Error('User already exists');
         }
-        const hashed = await bcrypt.hash(password, 10);
 
         try {
             const user = await models.User.create({
@@ -51,7 +68,8 @@ module.exports = {
                 firstName,
                 lastName,
                 accountType,
-                password: hashed,
+                uid,
+                pfp,
                 companyId: mongoose.Types.ObjectId(companyId)
 
             });
@@ -80,6 +98,8 @@ module.exports = {
         if (!valid) {
             throw new AuthenticationError('Invalid password');
         }
+        await FirebaseAdmin.auth().updateUser(user.uid, {dbId: user.id})
+
         return {
             user: user,
             token: jwt.sign({id: user._id}, process.env.JWT_SECRET)
@@ -100,10 +120,9 @@ module.exports = {
         console.log("generateChatToken token", token);
         let chatId = ""
         console.log("accountType", userFound.accountType);
-        if (userFound.accountType[0] === "JobSeeker"){
+        if (userFound.accountType[0] === "JobSeeker") {
             chatId = `${user.id}-${chatWithId}`;
-        }
-        else {
+        } else {
             chatId = `${chatWithId}-${user.id}`;
         }
         return {
@@ -591,22 +610,22 @@ module.exports = {
         };
     },
 
-    applyToJobPosting: async (_, {jobPostingId, userId}, {models, user}) => {
-
-        if (!user) {
-            throw new AuthenticationError('You must be signed in to apply to a job');
-        }
-        console.log(jobPostingId)
-        let jobPosting = await models.JobPosting.findById(jobPostingId);
-        console.log(jobPosting)
-        jobPosting = await models.JobPosting.findOneAndUpdate(
-            {_id: jobPostingId},
-            {$push: {applied: mongoose.Types.ObjectId(userId)}},
-            {new: true}
-        )
-
-        return jobPosting
-    },
+    // applyToJobPosting: async (_, {jobPostingId, userId}, {models, user}) => {
+    //
+    //     if (!user) {
+    //         throw new AuthenticationError('You must be signed in to apply to a job');
+    //     }
+    //     console.log(jobPostingId)
+    //     let jobPosting = await models.JobPosting.findById(jobPostingId);
+    //     console.log(jobPosting)
+    //     jobPosting = await models.JobPosting.findOneAndUpdate(
+    //         {_id: jobPostingId},
+    //         {$push: {applied: mongoose.Types.ObjectId(userId)}},
+    //         {new: true}
+    //     )
+    //
+    //     return jobPosting
+    // },
 
     applyToJobPosting: async (_, {jobPostingId}, {models, user}) => {
         if (!user) {
@@ -708,7 +727,7 @@ module.exports = {
         )
         let match = await models.User.findOne({_id: jobSeekerId, shortlistedCompanies: {$in: [recruiter.companyId]}})
         let isMatch = false;
-        console.log("match", match)
+        // console.log("match", match)
         if (match) {
             isMatch = true;
             // await models.Match.create({
@@ -726,7 +745,7 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a job');
         }
-        console.log("rejectJobSeeker- id", jobSeekerId)
+        // console.log("rejectJobSeeker- id", jobSeekerId)
         return await models.User.findOneAndUpdate(
             {_id: user.id},
             {$addToSet: {rejectedJobSeeker: mongoose.Types.ObjectId(jobSeekerId)}},
@@ -739,7 +758,7 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to match to a company');
         }
-        console.log("shortlistCompany- id", companyId)
+        // console.log("shortlistCompany- id", companyId)
         const company = await models.Company.findById(companyId);
         await models.User.findOneAndUpdate(
             {_id: user.id},
@@ -773,7 +792,7 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a company');
         }
-        console.log("rejectCompany- id", companyId)
+        // console.log("rejectCompany- id", companyId)
         return await models.User.findOneAndUpdate(
             {_id: user.id},
             {

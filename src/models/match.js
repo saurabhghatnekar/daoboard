@@ -9,6 +9,8 @@ const matchSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
         },
 
+    }, {
+        timestamps: true
     });
 
 module.exports = mongoose.model('Match', matchSchema);

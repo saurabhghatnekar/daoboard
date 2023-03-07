@@ -43,7 +43,6 @@ const userSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            required: true
         },
         accountType: [{
             type: String,
@@ -52,8 +51,9 @@ const userSchema = new mongoose.Schema(
         companyId: {
             type: mongoose.Schema.Types.ObjectId,
         },
-        company: {
-            type: mongoose.Schema.Types.ObjectId,
+        uid: {
+            type: String,
+            unique: true,
         },
 
         appliedTo: [{
@@ -217,6 +217,8 @@ const userSchema = new mongoose.Schema(
 
 
 
+    }, {
+        timestamps: true
     }
 );
 
