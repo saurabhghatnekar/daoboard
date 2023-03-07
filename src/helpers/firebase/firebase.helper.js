@@ -6,11 +6,12 @@
 const FirebaseAdmin = require("firebase-admin");
 
 // const serviceAccount = require("./molerat-16ec2-firebase-adminsdk-p5ysn-3b329a6916.json");
+// console.log(JSON.stringify({"private_key": process.env.VITE_FIREBASE_PRIVATE_KEY}))
 const serviceAccount = {
     "type": process.env.VITE_FIREBASE_TYPE,
     "project_id": process.env.VITE_FIREBASE_PROJECT_ID,
     "private_key_id": process.env.VITE_FIREBASE_PRIVATE_KEY_ID,
-    "private_key": process.env.VITE_FIREBASE_PRIVATE_KEY,
+    "private_key": JSON.parse(process.env.VITE_FIREBASE_PRIVATE_KEY).private_key,
     "client_email": process.env.VITE_FIREBASE_CLIENT_EMAIL,
     "client_id": process.env.VITE_FIREBASE_CLIENT_ID,
     "auth_uri": process.env.VITE_FIREBASE_AUTH_URI,
