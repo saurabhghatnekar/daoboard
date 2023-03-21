@@ -174,7 +174,7 @@ module.exports = gql`
     type Mutation {
         singleUpload(file: Upload!): File!
         signUp(email: Email!, password: String, firstName: String!, lastName:String!, accountType: AccountType!, uid:String, pfp:String): String!
-        signIn(email: Email!, password: String, uid:String): SignInResponse!
+        signIn(email: Email!, password: String, uid:String, accessToken:String): SignInResponse!
         generateChatToken(chatWithId: ID!): ChatToken
         matchToJobPosting(jobPostingId: ID!): JobPosting!
         applyToJobPosting(jobPostingId: ID!): JobPosting!

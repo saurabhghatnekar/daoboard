@@ -86,11 +86,27 @@ module.exports = {
         }
     },
 
-    signIn: async (_, {email, password}, {models}) => {
-
+    signIn: async (_, {email, password, accessToken}, {models}) => {
+        // console.log("signIn", email, password, accessToken);
         email = email.trim().toLowerCase();
         const user = await models.User.findOne({email});
+        if (accessToken) {
+            return await FirebaseAdmin.auth().verifyIdToken(accessToken)
+                .then((decodedToken) => {
+                    console.log("decodedToken", decodedToken);
+                    if (user.uid !== decodedToken.uid) {
+                        throw new AuthenticationError('Email not found');
+                    }
+                    return {
+                        user: user,
+                        token: jwt.sign({id: user._id}, process.env.JWT_SECRET)
+                    };
 
+                })
+                .catch((error) => {
+                    console.log("error", error);
+                });
+        }
         if (!user) {
             throw new AuthenticationError('Email not found');
         }
