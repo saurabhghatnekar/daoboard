@@ -29,13 +29,18 @@ const getUser = async token => {
                             return {}
                         }
                         const user = await models.User.findOne({uid})
+
                         if (!user) {
+
                             return uid
                         }
 
                         return user.id;
                     }
-                );
+                ).catch(function (error) {
+                    console.log(error)
+                    return {}
+                })
 
             //return jwt.verify(token, process.env.JWT_SECRET);
         } catch (err) {

@@ -57,6 +57,10 @@ module.exports = {
 
         return await users;
     },
+
+    company: async (_, {id}, {models}) => {
+        return await models.Company.findById(id);
+    },
     companies: async (_, __, {models}) => {
         return await models.Company.find();
     },

@@ -43,7 +43,7 @@ module.exports = gql`
         """
         Recruiter info
         """
-
+        companyId: String
         company: Company
         jobPostings: [JobPosting]
         rejectedJobSeekers: [User]
@@ -173,7 +173,7 @@ module.exports = gql`
 
     type Mutation {
         singleUpload(file: Upload!): File!
-        signUp(email: Email!, password: String, firstName: String!, lastName:String!, accountType: AccountType!, uid:String, pfp:String): String!
+        signUp(email: Email!, password: String, firstName: String!, lastName:String!, accountType: AccountType!, uid:String, pfp:String, accessToken: String): SignInResponse!
         signIn(email: Email!, password: String, uid:String, accessToken:String): SignInResponse!
         generateChatToken(chatWithId: ID!): ChatToken
         matchToJobPosting(jobPostingId: ID!): JobPosting!

@@ -31,6 +31,10 @@ const jobPostingSchema = new mongoose.Schema(
             maxLength: 4000,
             required: true
         },
+        companyId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Company'
+        },
         company: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'

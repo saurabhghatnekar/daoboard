@@ -54,14 +54,32 @@ const uploadFile = async (file) => {
 
 
 module.exports = {
-    signUp: async (_, {email, password, firstName, lastName, accountType, companyId, uid, pfp}, {models}) => {
+    signUp: async (_, {
+        email,
+        password,
+        firstName,
+        lastName,
+        accountType,
+        companyId,
+        uid,
+        pfp,
+        accessToken
+    }, {models}) => {
         console.log("signUp", email, password, firstName, lastName, accountType, companyId, uid, pfp)
         email = email.trim().toLowerCase();
         const user = await models.User.findOne({email});
         if (user) {
             throw new Error('User already exists');
         }
-
+        console.log("Creating user", user);
+        let company;
+        if ((accountType[0] === "CompanyAdmin" || accountType === "CompanyAdmin") && !companyId) {
+            console.log("Creating company")
+            company = await models.Company.create({
+                name: "Company Name",
+                description: "",
+            });
+        }
         try {
             const user = await models.User.create({
                 email,
@@ -70,16 +88,30 @@ module.exports = {
                 accountType,
                 uid,
                 pfp,
-                companyId: mongoose.Types.ObjectId(companyId)
+                companyId: company ? company.id : companyId,
+                company: company ? company.id : companyId,
 
             });
+            console.log("Created user", user);
+            // update Company recruiters
+            if (company) {
+                console.log("Updating company recruiters", company.recruiters)
+                company.recruiters.push(user.id);
+                await company.save();
+                console.log("Updating company recruiters", company.recruiters)
+            }
+
             const chatServerResp = await chatServerClient.upsertUsers([{
                 id: user.id,
                 firstName: firstName,
                 lastName: lastName
             }]);
+
             console.log("chatServerResp", chatServerResp);
-            return jwt.sign({id: user._id}, process.env.JWT_SECRET);
+            return {
+                user: user,
+                token: accessToken
+            };
         } catch (err) {
             console.log(err);
             throw new Error('Error creating account');
@@ -93,13 +125,13 @@ module.exports = {
         if (accessToken) {
             return await FirebaseAdmin.auth().verifyIdToken(accessToken)
                 .then((decodedToken) => {
-                    console.log("decodedToken", decodedToken);
+                    //console.log("decodedToken", decodedToken);
                     if (user.uid !== decodedToken.uid) {
                         throw new AuthenticationError('Email not found');
                     }
                     return {
                         user: user,
-                        token: jwt.sign({id: user._id}, process.env.JWT_SECRET)
+                        token: accessToken
                     };
 
                 })
@@ -471,7 +503,11 @@ module.exports = {
         }
 
         const company = await models.Company.findById(id);
-        if (company && !company.recruiters.includes(user.id)) {
+        console.log("updateCompany", company)
+        console.log("updateCompany user", user)
+
+        console.log("updateCompany company.recruiters", company)
+        if (company && !company.recruiters.map(id=>id.toString()).includes(user.id)) {
             throw new ForbiddenError(
                 "You don't have permissions to update company profile!"
             );
@@ -520,7 +556,7 @@ module.exports = {
         }
         console.log(_user)
         const jobPosting = await models.JobPosting.create({
-            company: _user.companyId,
+            company: _user.company,
             companyId: _user.companyId,
             about: args.about,
             title: args.title,
@@ -530,10 +566,12 @@ module.exports = {
             skillsRequired: args.skillsRequired,
             hiringContact: mongoose.Types.ObjectId(user.id),
         })
+        console.log("jobPosting", jobPosting)
         await models.Company.findOneAndUpdate(
-            {_id: _user.companyId},
+            {_id: _user.company},
             {$push: {jobPostings: mongoose.Types.ObjectId(jobPosting)}}
         );
+        console.log(await models.Company.findById(_user.company))
         return jobPosting
 
     },
