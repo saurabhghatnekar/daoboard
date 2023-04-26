@@ -15,7 +15,8 @@ const StreamChat = require('stream-chat').StreamChat;
 const {extname} = require('path');
 const {v4: uuid} = require('uuid'); // (A)
 const s3 = require('./s3');
-const {FirebaseAdmin} = require("../helpers/firebase/firebase.helper"); // (B)
+const {FirebaseAdmin} = require("../helpers/firebase/firebase.helper");
+const {PreRegistration} = require("../models"); // (B)
 
 
 // const firebaseConfig = {
@@ -366,7 +367,7 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You must be signed in to create a profile');
         }
-        console.log(args);
+        console.log('createEducation', args);
         const education = await models.Education.create({
             school: args.school,
             graduation: args.graduation,
@@ -387,6 +388,10 @@ module.exports = {
                                 degreeType,
                             },
                             {models, user}) => {
+        console.log("updateEducation",  id,
+                                school,
+                                graduation,
+                                degreeType);
 
         if (!user) {
             throw new AuthenticationError('You must be signed in to create a profile');
@@ -507,7 +512,7 @@ module.exports = {
         console.log("updateCompany user", user)
 
         console.log("updateCompany company.recruiters", company)
-        if (company && !company.recruiters.map(id=>id.toString()).includes(user.id)) {
+        if (company && !company.recruiters.map(id => id.toString()).includes(user.id)) {
             throw new ForbiddenError(
                 "You don't have permissions to update company profile!"
             );
@@ -856,6 +861,15 @@ module.exports = {
 
             {new: true}
         )
+    },
+    preRegister: async (_, {inputData}, {models}) => {
+        console.log("preRegister- data", inputData)
+        // let pfp = await inputData.pfp;
+        // inputData.pfp = uploadFile(pfp);
+        // console.log("preRegister- data", inputData)
+        return await PreRegistration.create(inputData)
+
+
     }
 
 }

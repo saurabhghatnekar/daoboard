@@ -11,16 +11,16 @@ module.exports = gql`
         chatId: String!
         chatName: String!
         user: User
-        token: String!  
+        token: String!
         company: Company
     }
-    
+
     type Match {
         isMatch: Boolean
         user: User
         company: Company
     }
-    
+
     type User {
 
         """
@@ -143,6 +143,29 @@ module.exports = gql`
         user: User!
     }
 
+    input PreRegistrationInput {
+        email: Email!
+        fullName: String!
+        interests: [String]
+        company: String
+        about: String
+        skills: [String]
+        education: String
+        graduationYear: String
+        linkedIn: String
+        github: String
+        twitter: String
+        website: String
+        jobTitle: String
+        pfp: String
+        employer: String
+
+    }
+    type PreRegistrationResponse {
+        id: ID!
+        email: Email!
+        fullName: String!
+    }
     type Query {
         uploads: [File]
         users(
@@ -181,7 +204,7 @@ module.exports = gql`
         rejectJobPosting(jobPostingId: ID!): JobPosting!
 
         matchToJobSeeker(jobSeekerId: ID!): User!
-        
+
         uploadResume(file: Upload!): File!
 
         updateProfile(
@@ -278,6 +301,8 @@ module.exports = gql`
 
         shortlistJobSeeker(jobSeekerId: ID!): Match
         rejectJobSeeker(jobSeekerId: ID!): User!
+
+        preRegister(inputData: PreRegistrationInput): PreRegistrationResponse!
 
     }
 
