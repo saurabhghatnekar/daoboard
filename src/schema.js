@@ -147,7 +147,7 @@ module.exports = gql`
         email: Email!
         fullName: String!
         interests: [String]
-        company: String
+        employer: String
         about: String
         skills: [String]
         education: String

@@ -13,7 +13,7 @@ const preRegistrationSchema = new mongoose.Schema({
             type: String,
             default: ""
         },
-        companyName: {
+        employer: {
             type: String,
             default: ""
         },
