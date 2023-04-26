@@ -158,7 +158,6 @@ module.exports = gql`
         website: String
         jobTitle: String
         pfp: String
-        employer: String
 
     }
     type PreRegistrationResponse {
