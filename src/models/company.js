@@ -48,6 +48,10 @@ const companySchema = new mongoose.Schema(
         },
         rolesOffered: [],
 
+        shortlistedByJobSeekers: [{
+            type: mongoose.Schema.Types.ObjectId,
+        }],
+
         shortlistedJobSeekersList: [{
             type: mongoose.Schema.Types.ObjectId,
             default: []

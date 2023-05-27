@@ -388,10 +388,10 @@ module.exports = {
                                 degreeType,
                             },
                             {models, user}) => {
-        console.log("updateEducation",  id,
-                                school,
-                                graduation,
-                                degreeType);
+        console.log("updateEducation", id,
+            school,
+            graduation,
+            degreeType);
 
         if (!user) {
             throw new AuthenticationError('You must be signed in to create a profile');
@@ -801,13 +801,15 @@ module.exports = {
     },
 
     rejectJobSeeker: async (_, {jobSeekerId}, {models, user}) => {
+        console.log("rejectJobSeeker- jobSeekerId", jobSeekerId)
         if (!user) {
             throw new AuthenticationError('You must be signed in to reject a job');
         }
         // console.log("rejectJobSeeker- id", jobSeekerId)
+        console.log("rejectJobSeeker- user.id", user.id)
         return await models.User.findOneAndUpdate(
             {_id: user.id},
-            {$addToSet: {rejectedJobSeeker: mongoose.Types.ObjectId(jobSeekerId)}},
+            {$addToSet: {rejectedJobSeekers: mongoose.Types.ObjectId(jobSeekerId)}},
             {new: true}
         )
 
@@ -841,11 +843,6 @@ module.exports = {
             company: company,
             isMatch: isMatch
         }
-
-
-        // return company
-
-
     },
     rejectCompany: async (_, {companyId}, {models, user}) => {
         if (!user) {
@@ -861,6 +858,50 @@ module.exports = {
 
             {new: true}
         )
+    },
+    shortlistJobPosting: async (_, {jobPostingId}, {models, user}) => {
+        console.log('shortlistJobPosting- user', user)
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to shortlist a job posting');
+        }
+        // console.log("shortlistJobPosting- id", jobPostingId)
+        const jobPosting = await models.JobPosting.findById(jobPostingId);
+        await models.User.findOneAndUpdate(
+            {_id: user.id},
+            {
+                $addToSet: {shortlistedJobPostings: mongoose.Types.ObjectId(jobPostingId)},
+                $pull: {rejectedJobPostings: mongoose.Types.ObjectId(jobPostingId)}
+            },
+            {new: true}
+        )
+        await models.JobPosting.findOneAndUpdate(
+            {_id: jobPostingId},
+            {$addToSet: {applied: mongoose.Types.ObjectId(user.id)}},
+            {new: true}
+        )
+        await models.Company.findOneAndUpdate(
+            {_id: jobPosting.companyId},
+            {$addToSet: {shortlistedByJobSeekers: mongoose.Types.ObjectId(user.id)}},
+            {new: true}
+        )
+
+        let match = await models.Company.findOne({
+            _id: jobPosting.companyId,
+            shortlistedJobSeekersList: {$in: [user.id]}
+        })
+        let isMatch = false;
+        // console.log("match", match)
+        if (match) {
+            isMatch = true;
+            await models.Match.create({
+                jobSeekerId: user.id,
+                companyId: jobPosting.companyId,
+            })
+        }
+        return {
+            jobPosting: jobPosting,
+            isMatch: isMatch
+        }
     },
     preRegister: async (_, {inputData}, {models}) => {
         console.log("preRegister- data", inputData)

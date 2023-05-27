@@ -19,6 +19,7 @@ module.exports = gql`
         isMatch: Boolean
         user: User
         company: Company
+        jobPosting: JobPosting
     }
 
     type User {
@@ -200,7 +201,6 @@ module.exports = gql`
         generateChatToken(chatWithId: ID!): ChatToken
         matchToJobPosting(jobPostingId: ID!): JobPosting!
         applyToJobPosting(jobPostingId: ID!): JobPosting!
-        rejectJobPosting(jobPostingId: ID!): JobPosting!
 
         matchToJobSeeker(jobSeekerId: ID!): User!
 
@@ -294,7 +294,10 @@ module.exports = gql`
 
         applyToJob(id: ID!): JobPosting!
         updateResume(id: ID!, resume: Upload!): User!
-
+        
+        shortlistJobPosting(jobPostingId: ID!): Match!
+        rejectJobPosting(jobPostingId: ID!): JobPosting!
+        
         shortlistCompany(companyId: ID!): Match
         rejectCompany(companyId: ID!): Company!
 

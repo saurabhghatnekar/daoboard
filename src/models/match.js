@@ -5,6 +5,9 @@ const matchSchema = new mongoose.Schema(
         jobSeekerId: {
             type: mongoose.Schema.Types.ObjectId,
         },
+        jobPostingId: {
+            type: mongoose.Schema.Types.ObjectId,
+        },
         companyId: {
             type: mongoose.Schema.Types.ObjectId,
         },

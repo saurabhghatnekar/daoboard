@@ -14,6 +14,6 @@ module.exports = {
     File,
     Company,
     JobPosting,
-    PreRegistration
-    // Match
+    PreRegistration,
+    Match
 }

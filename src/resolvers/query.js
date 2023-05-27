@@ -15,13 +15,16 @@ module.exports = {
 
         const userData = await models.User.findById(user.id);
         // console.log("userData", userData.firstName);
-
-        const idsToExclude = userData.shortlistedCandidates.concat(userData.rejectedCandidates);
+        console.log("userData", userData.shortlistedCandidates);
+        console.log("userData", userData.rejectedJobSeekers)
+        const idsToExclude = userData.shortlistedCandidates.concat(userData.rejectedJobSeekers);
         // console.log("idsToExclude", idsToExclude);
         const shouldApplyFilters = Object.keys(filter).length !== 0;
 
         if (!shouldApplyFilters) {
-            return await models.User.find({_id: {$nin: idsToExclude}});
+            return await models.User.find({_id: {$nin: idsToExclude}}).sort({createdAt: -1});
+
+
         }
 
         const shouldApplyExperienceFilter = filter.experience;
@@ -156,7 +159,7 @@ module.exports = {
         // console.log("idsToExclude", idsToExclude);
         if (!shouldApplyFilters) {
             console.log(await models.Company.find({_id: {$nin: idsToExclude}}))
-            return await models.Company.find({_id: {$nin: idsToExclude}});
+            return await models.Company.find({_id: {$nin: idsToExclude}}).sort({createdAt: -1});
         }
 
         const shouldApplyCompanyNameFilter = filter.companyName != null;
